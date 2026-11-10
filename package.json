@@ -24,7 +24,7 @@
     "@preact/preset-vite": "^2.10.2",
     "@types/node": "^26.6.6",
     "puppeteer-core": "^25.17.0",
-    "typescript": "^5.9.0",
+    "typescript": "^7.0.2",
     "vite": "^7.1.0"
   }
 }
