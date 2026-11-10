@@ -1,0 +1,30 @@
+{
+  "name": "gopixel-academy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check:content": "node --test tests/*.test.mjs && node scripts/audit-assets.mjs",
+    "lint": "npx @biomejs/biome lint",
+    "typecheck": "tsc --noEmit",
+    "test:selects": "node scripts/verify-all-selects.mjs",
+    "test:e2e": "node scripts/test-master-e2e.mjs",
+    "test:buttons": "node scripts/test-all-buttons-e2e.js",
+    "test:showcase": "node scripts/capture_readme_showcase.cjs",
+    "test": "npm run check:content"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.2.1",
+    "preact": "^10.27.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.2",
+    "@types/node": "^26.6.6",
+    "puppeteer-core": "^25.17.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.1.0"
+  }
+}

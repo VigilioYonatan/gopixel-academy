@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {validateOperationsLab,gradeOperations,verifiedOperationsRecord} from '../src/features/senior/engine/operations.mjs';
+const labs=JSON.parse(readFileSync(new URL('../src/content/senior/operations-labs.json',import.meta.url),'utf8'));
+test('18 distinct versioned operational cases',()=>{assert.equal(labs.length,18);assert.equal(new Set(labs.map(l=>l.moduleId)).size,18);assert.equal(new Set(labs.map(l=>l.evidence)).size,18);assert.equal(new Set(labs.map(l=>l.title)).size,18);labs.forEach(validateOperationsLab)});
+test('every case grades root cause and mitigation',()=>{for(const l of labs){const good=[l.diagnosisCorrect,l.actionCorrect];const result=gradeOperations(l,good);assert.equal(result.score,100);assert.equal(result.passed,true);const bad=[(good[0]+1)%3,(good[1]+1)%3];assert.equal(gradeOperations(l,bad).score,0);assert.equal(gradeOperations(l,[good[0],bad[1]]).score,50)}});
+test('invalid answers do not pass',()=>{for(const bad of [[-1,0],[0],[0,3],['1',1],null,[1,1,1]])assert.throws(()=>gradeOperations(labs[0],bad))});
+test('tampered local records rejected',()=>{const l=labs[0],answers=[l.diagnosisCorrect,l.actionCorrect];const result=gradeOperations(l,answers);const record={moduleId:l.moduleId,challengeId:'operations-lab',version:1,answers,correct:result.correct,score:result.score,passed:result.passed,completedAt:new Date().toISOString()};assert.equal(verifiedOperationsRecord(record,l),true);assert.equal(verifiedOperationsRecord({...record,score:50},l),false);assert.equal(verifiedOperationsRecord({...record,answers:[0,0]},l),false);assert.equal(verifiedOperationsRecord({...record,version:99},l),false)});
+test('routes and storage are wired into app',()=>{const s=readFileSync(new URL('../src/app/App.tsx',import.meta.url),'utf8');assert.match(s,/operationsResults/);assert.match(s,/verifiedOperationsRecord/);assert.match(s,/operations-lab/);assert.match(s,/OperationsLab/)});

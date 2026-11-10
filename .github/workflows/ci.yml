@@ -1,0 +1,44 @@
+name: Quality & Security
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check:content
+      - name: Verify relative source imports
+        run: python3 scripts/audit-static-imports.py
+      - run: npm run build
+      - name: Dependency vulnerabilities (production + dev)
+        run: npm audit --audit-level=high
+      - name: Ensure assets + git repo don't contain large accidental binaries
+        run: |
+          test -f dist/index.html
+          ! find dist -type f -size +20M | grep .
+
+  native-go-labs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: labs-native/go.mod
+          cache-dependency-path: labs-native/go.mod
+      - name: Native Go laboratory unit tests and race detector
+        working-directory: labs-native
+        run: |
+          go test ./... -count=1
+          go test -race ./... -count=1
+          go vet ./...
+      - name: Ensure site download reproduces native lab sources
+        run: python3 scripts/audit-native-bundle.py

@@ -1,0 +1,578 @@
+[
+  {
+    "moduleId": "S01",
+    "id": "s01-review",
+    "version": 1,
+    "title": "Propagación de errores",
+    "language": "es",
+    "code": "func Load(path string) ([]byte, error) {\n    b, err := os.ReadFile(path)\n    if err != nil { return nil, fmt.Errorf(\"load: %v\", err) }\n    return b, nil\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "Se pierde la cadena de errores y errors.Is no puede reconocer el error original.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "Se pierde la cadena de errores y errors.Is no puede reconocer el error original."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Devolver siempre nil para no revelar detalles.",
+          "Cambiar fmt.Errorf por panic.",
+          "Usar fmt.Errorf(\"load: %w\", err) y probar errors.Is en consumidores."
+        ],
+        "correct": 2,
+        "explanation": "Usar fmt.Errorf(\"load: %w\", err) y probar errors.Is en consumidores."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S02",
+    "id": "s02-review",
+    "version": 1,
+    "title": "Inyección de dependencias",
+    "language": "es",
+    "code": "var repository Repository\nfunc NewHandler() http.HandlerFunc {\n    return func(w http.ResponseWriter, r *http.Request) {\n        repository.Save(r.Context(), \"new\")\n    }\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "El handler depende de estado global mutable y se vuelve difícil de aislar en pruebas."
+        ],
+        "correct": 2,
+        "explanation": "El handler depende de estado global mutable y se vuelve difícil de aislar en pruebas."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Recibir Repository en NewHandler(repo Repository) y validar que no sea nil.",
+          "Crear la variable global desde init().",
+          "Hacer público el estado global para que cada test lo cambie."
+        ],
+        "correct": 0,
+        "explanation": "Recibir Repository en NewHandler(repo Repository) y validar que no sea nil."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S03",
+    "id": "s03-review",
+    "version": 1,
+    "title": "Idempotencia bajo concurrencia",
+    "language": "es",
+    "code": "if !seen[key] {\n    chargeAccount(account, cents)\n    seen[key] = true\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "La comprobación y el cargo no son atómicos: dos peticiones pueden cobrar dos veces.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "La comprobación y el cargo no son atómicos: dos peticiones pueden cobrar dos veces."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Cachear solo seen[key] en el navegador.",
+          "Guardar el resultado de la clave idempotente y el cargo en una transacción con unicidad por actor.",
+          "Añadir un Sleep para separar peticiones."
+        ],
+        "correct": 1,
+        "explanation": "Guardar el resultado de la clave idempotente y el cargo en una transacción con unicidad por actor."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S04",
+    "id": "s04-review",
+    "version": 1,
+    "title": "Invariantes de dominio",
+    "language": "es",
+    "code": "func (o *Order) Ship() {\n    o.State = \"shipped\"\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "Se puede enviar una orden anulada o sin pago; faltan validaciones de transición.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "Se puede enviar una orden anulada o sin pago; faltan validaciones de transición."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Exponer State para que la UI lo edite.",
+          "Permitir cualquier transición y corregir con un cron.",
+          "Definir transiciones explícitas con errores y tests de estados inválidos."
+        ],
+        "correct": 2,
+        "explanation": "Definir transiciones explícitas con errores y tests de estados inválidos."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S05",
+    "id": "s05-review",
+    "version": 1,
+    "title": "Concurrencia acotada",
+    "language": "es",
+    "code": "for _, job := range jobs {\n    go process(job)\n}\nreturn nil",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "El número de goroutines no tiene límite y la función retorna antes de finalizar trabajos."
+        ],
+        "correct": 2,
+        "explanation": "El número de goroutines no tiene límite y la función retorna antes de finalizar trabajos."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Usar worker pool acotado, context de cancelación y espera explícita de terminación.",
+          "Lanzar más goroutines para terminar antes.",
+          "Colocar runtime.Gosched() después de cada creación."
+        ],
+        "correct": 0,
+        "explanation": "Usar worker pool acotado, context de cancelación y espera explícita de terminación."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S06",
+    "id": "s06-review",
+    "version": 1,
+    "title": "Memory Model",
+    "language": "es",
+    "code": "func SetOnce() {\n    if counter == 0 {\n        counter = 1\n    }\n}\n// Invocada por múltiples goroutines",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "Lecturas y escrituras concurrentes sin sincronización generan data races.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "Lecturas y escrituras concurrentes sin sincronización generan data races."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Añadir una instrucción print para sincronizar.",
+          "Proteger lectura y escritura con mutex o usar una operación atómica apropiada al contrato.",
+          "Usar volatile en la variable."
+        ],
+        "correct": 1,
+        "explanation": "Proteger lectura y escritura con mutex o usar una operación atómica apropiada al contrato."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S07",
+    "id": "s07-review",
+    "version": 1,
+    "title": "Retención de memoria",
+    "language": "es",
+    "code": "func Prefix(buffer []byte) []byte {\n    return buffer[:1]\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "Una vista minúscula puede retener todo el backing array grande en el heap.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "Una vista minúscula puede retener todo el backing array grande en el heap."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Incrementar GOGC hasta que desaparezca.",
+          "Devolver un puntero al slice original.",
+          "Copiar el prefijo a un nuevo slice de tamaño limitado antes de retornarlo."
+        ],
+        "correct": 2,
+        "explanation": "Copiar el prefijo a un nuevo slice de tamaño limitado antes de retornarlo."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S08",
+    "id": "s08-review",
+    "version": 1,
+    "title": "Benchmarking y asignaciones",
+    "language": "es",
+    "code": "func JoinIDs(ids []int) string {\n    s := \"\"\n    for _, id := range ids { s += strconv.Itoa(id) + \",\" }\n    return s\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "Concatenar strings en bucle aumenta asignaciones; además falta una medición reproducible."
+        ],
+        "correct": 2,
+        "explanation": "Concatenar strings en bucle aumenta asignaciones; además falta una medición reproducible."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Medir con testing.B, b.ReportAllocs y comparar una versión strings.Builder.",
+          "Aumentar el número de goroutines durante el benchmark.",
+          "Elegir la solución más corta sin medir."
+        ],
+        "correct": 0,
+        "explanation": "Medir con testing.B, b.ReportAllocs y comparar una versión strings.Builder."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S09",
+    "id": "s09-review",
+    "version": 1,
+    "title": "Mensajería at-least-once",
+    "language": "es",
+    "code": "func Consume(e Event) error {\n    broker.Ack(e.ID)\n    return database.Insert(e)\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "El ACK ocurre antes de persistir y una caída puede perder el evento.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "El ACK ocurre antes de persistir y una caída puede perder el evento."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Confiar en que la cola entrega exactamente una vez.",
+          "Persistir y deduplicar de forma transaccional antes de confirmar la recepción.",
+          "Confirmar el evento inmediatamente al leerlo."
+        ],
+        "correct": 1,
+        "explanation": "Persistir y deduplicar de forma transaccional antes de confirmar la recepción."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S10",
+    "id": "s10-review",
+    "version": 1,
+    "title": "Consistencia de inventario",
+    "language": "es",
+    "code": "if product.Stock > 0 {\n    product.Stock--\n    db.Save(product)\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "Las solicitudes simultáneas pueden leer el mismo stock y vender más unidades de las disponibles.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "Las solicitudes simultáneas pueden leer el mismo stock y vender más unidades de las disponibles."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Añadir un mutex solo en cada instancia de frontend.",
+          "Reintentar la venta aunque el stock quede negativo.",
+          "Usar UPDATE condicional transaccional (stock > 0) y comprobar filas afectadas."
+        ],
+        "correct": 2,
+        "explanation": "Usar UPDATE condicional transaccional (stock > 0) y comprobar filas afectadas."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S11",
+    "id": "s11-review",
+    "version": 1,
+    "title": "Retrys y cancelación",
+    "language": "es",
+    "code": "for {\n    if err := call(); err == nil { return nil }\n    time.Sleep(time.Second)\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "Los reintentos son infinitos, ignoran cancelación y pueden amplificar una caída del servicio."
+        ],
+        "correct": 2,
+        "explanation": "Los reintentos son infinitos, ignoran cancelación y pueden amplificar una caída del servicio."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Aplicar máximo de intentos, backoff con jitter, context y política basada en idempotencia.",
+          "Reintentar inmediatamente sin descanso.",
+          "Ignorar el código de error porque todos son transitorios."
+        ],
+        "correct": 0,
+        "explanation": "Aplicar máximo de intentos, backoff con jitter, context y política basada en idempotencia."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S12",
+    "id": "s12-review",
+    "version": 1,
+    "title": "Path traversal",
+    "language": "es",
+    "code": "func Open(root, name string) (*os.File, error) {\n    return os.Open(filepath.Join(root, name))\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "La ruta proporcionada puede escapar del directorio mediante ../ o symlinks.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "La ruta proporcionada puede escapar del directorio mediante ../ o symlinks."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Sustituir filepath.Join por concatenación de strings.",
+          "Resolver y restringir rutas a un directorio permitido con controles resistentes a symlinks.",
+          "Filtrar solo la cadena \"../\"."
+        ],
+        "correct": 1,
+        "explanation": "Resolver y restringir rutas a un directorio permitido con controles resistentes a symlinks."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S13",
+    "id": "s13-review",
+    "version": 1,
+    "title": "Tests deterministas",
+    "language": "es",
+    "code": "func Expired(expiry time.Time) bool {\n    return time.Now().After(expiry)\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El reloj global introduce no determinismo y obliga a tests basados en Sleep.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "El reloj global introduce no determinismo y obliga a tests basados en Sleep."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Usar Sleep de cinco segundos para estabilizar pruebas.",
+          "Desactivar tests que fallan en CI.",
+          "Inyectar una función Clock y probar fronteras de tiempo con fechas fijas."
+        ],
+        "correct": 2,
+        "explanation": "Inyectar una función Clock y probar fronteras de tiempo con fechas fijas."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S14",
+    "id": "s14-review",
+    "version": 1,
+    "title": "Observabilidad de latencia",
+    "language": "es",
+    "code": "latencyAverage := sumLatency / requestCount\nif latencyAverage < 200 { reportHealthy() }",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "La media oculta colas largas y percentiles p95/p99 inaceptables."
+        ],
+        "correct": 2,
+        "explanation": "La media oculta colas largas y percentiles p95/p99 inaceptables."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Registrar histogramas con etiquetas acotadas y evaluar p95/p99, tasa de error y SLO.",
+          "Aumentar el umbral de la media para evitar alertas.",
+          "Registrar cada userID como etiqueta de métrica."
+        ],
+        "correct": 0,
+        "explanation": "Registrar histogramas con etiquetas acotadas y evaluar p95/p99, tasa de error y SLO."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S15",
+    "id": "s15-review",
+    "version": 1,
+    "title": "Graceful shutdown",
+    "language": "es",
+    "code": "go server.Shutdown(context.Background())\nreturn nil",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "No se espera la finalización y el contexto carece de deadline; se pueden perder peticiones.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "No se espera la finalización y el contexto carece de deadline; se pueden perder peticiones."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Cerrar únicamente las conexiones nuevas, no las activas.",
+          "Esperar Shutdown con timeout acotado, señalización y control de trabajos en curso.",
+          "Reemplazar Shutdown por os.Exit(0) inmediatamente."
+        ],
+        "correct": 1,
+        "explanation": "Esperar Shutdown con timeout acotado, señalización y control de trabajos en curso."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S16",
+    "id": "s16-review",
+    "version": 1,
+    "title": "Compatibilidad evolutiva",
+    "language": "es",
+    "code": "type APIResponse struct {\n    UserName string `json:\"nameV2\"`\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "Renombrar un campo público de JSON sin transición rompe consumidores existentes.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas."
+        ],
+        "correct": 0,
+        "explanation": "Renombrar un campo público de JSON sin transición rompe consumidores existentes."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Modificar el campo sin comunicarlo y reiniciar todos los clientes.",
+          "Eliminar los tests viejos porque el campo cambió.",
+          "Mantener el contrato anterior y versionar/migrar con compatibilidad y tests de contrato."
+        ],
+        "correct": 2,
+        "explanation": "Mantener el contrato anterior y versionar/migrar con compatibilidad y tests de contrato."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S17",
+    "id": "s17-review",
+    "version": 1,
+    "title": "Riesgo en code review",
+    "language": "es",
+    "code": "func Approve(diff Lines) bool {\n    return len(diff) < 50\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El problema es únicamente un detalle de formato y no afecta la corrección.",
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "El tamaño del diff no mide exposición de secretos, criticidad ni cambios de contrato."
+        ],
+        "correct": 2,
+        "explanation": "El tamaño del diff no mide exposición de secretos, criticidad ni cambios de contrato."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Priorizar por impacto, probabilidad, superficie expuesta y estrategia de prueba.",
+          "Aprobar todo cambio menor de cincuenta líneas.",
+          "Medir únicamente el número de archivos modificados."
+        ],
+        "correct": 0,
+        "explanation": "Priorizar por impacto, probabilidad, superficie expuesta y estrategia de prueba."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  },
+  {
+    "moduleId": "S18",
+    "id": "s18-review",
+    "version": 1,
+    "title": "Capacidad y backpressure",
+    "language": "es",
+    "code": "func Configure(requestsPerSecond float64) chan Job {\n    workers := int(requestsPerSecond)\n    _ = workers\n    queue := make(chan Job, 1000000)\n    return queue\n}",
+    "questions": [
+      {
+        "prompt": "¿Qué riesgo debes señalar en la revisión?",
+        "options": [
+          "El compilador Go siempre evita este tipo de error lógico sin pruebas.",
+          "Dimensionar workers por RPS sin tiempo de servicio ni límites de memoria puede saturar recursos.",
+          "El problema es únicamente un detalle de formato y no afecta la corrección."
+        ],
+        "correct": 1,
+        "explanation": "Dimensionar workers por RPS sin tiempo de servicio ni límites de memoria puede saturar recursos."
+      },
+      {
+        "prompt": "¿Qué cambio recomendarías antes de aprobar?",
+        "options": [
+          "Fijar workers al número de usuarios registrados.",
+          "Estimar concurrencia con tasa×duración, acotar cola y validar con carga y métricas.",
+          "Aumentar la cola ilimitadamente para ocultar la latencia."
+        ],
+        "correct": 1,
+        "explanation": "Estimar concurrencia con tasa×duración, acotar cola y validar con carga y métricas."
+      }
+    ],
+    "practice": "Explica el riesgo, exige una prueba de regresión y registra el trade-off en tu ADR.",
+    "verification": "static-code-review: respuesta contra clave versionada; no compila este fragmento"
+  }
+]

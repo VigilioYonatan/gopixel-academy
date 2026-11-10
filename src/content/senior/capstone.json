@@ -1,0 +1,23 @@
+{
+  "id": "senior-capstone-orders",
+  "version": 1,
+  "language": "es",
+  "title": "Capstone Senior: pedidos seguros en un solo proceso",
+  "summary": "Un laboratorio de ingeniería Go que conecta transacciones en memoria, HTTP, idempotencia, concurrencia, seguridad y observabilidad técnica.",
+  "steps": [
+    {"id":"boundary","title":"1. Contratos y límites de confianza","detail":"El endpoint POST /orders exige un token de desarrollo, application/json, body de 4 KiB y rechazo de campos desconocidos. Devuelve errores HTTP controlados sin filtrar detalles internos.","test":"TestAuthenticationAndStrictPayload","area":"Seguridad y API"},
+    {"id":"idempotency","title":"2. Idempotencia por clave","detail":"Submit memoriza una respuesta y los parámetros originales; una solicitud repetida conserva el recibo inicial. Una clave reutilizada con distintos parámetros genera ErrConflict.","test":"TestIdempotencySameReceiptAndConflict","area":"Arquitectura"},
+    {"id":"stock","title":"3. Inventario concurrente","detail":"Un mutex hace atómica la comprobación y reserva de stock dentro del mismo proceso. Las pruebas lanzan 200 goroutines para demostrar que solo 17 reservas son aceptadas.","test":"TestAtomicInventoryUnderLoad","area":"Concurrencia"},
+    {"id":"outbox","title":"4. Outbox educativo","detail":"Un evento se registra junto al pedido y PendingEvents devuelve una copia. El ACK es idempotente. No sustituye un outbox persistente ni prueba entrega exactly-once.","test":"TestOutboxCopyAndAck","area":"Sistemas distribuidos"},
+    {"id":"quality","title":"5. Tests, fuzzing y benchmark","detail":"Se prueban errores, límites de stock y overflow de int64. FuzzIdempotentReceipt verifica consistencia de respuestas y BenchmarkSubmit mide asignaciones en la máquina local.","test":"FuzzIdempotentReceipt / BenchmarkSubmit","area":"Testing y rendimiento"},
+    {"id":"operations","title":"6. Ciclo de vida HTTP local","detail":"El ejecutable utiliza timeouts, cabeceras limitadas, escucha en loopback y shutdown ante señales. No es una API publicada ni autenticación de producción.","test":"go test -race ./capstone/...","area":"Operación"}
+  ],
+  "command": "cd labs-native\ngo test ./capstone/... -count=1\ngo test -race ./capstone/... -count=1\ngo vet ./capstone/...\ngo test -run '^$' -bench BenchmarkSubmit ./capstone/orders",
+  "boundaries": [
+    "No hay persistencia durable: la información se pierde si el proceso termina.",
+    "El ejemplo HTTP usa una clave compartida de desarrollo, no OAuth, autorización ni multi-tenancy.",
+    "Para varios procesos, usar una base de datos transaccional con unicidad en claves de idempotencia y outbox persistente.",
+    "Las pruebas de concurrencia no sustituyen una auditoría de seguridad ni pruebas de carga del sistema real.",
+    "La web de GitHub Pages únicamente ofrece este laboratorio para descarga; no levanta este servidor."
+  ]
+}

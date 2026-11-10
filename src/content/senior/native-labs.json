@@ -1,0 +1,128 @@
+[
+  {
+    "id": "S01",
+    "slug": "s01-idiomatic-errors",
+    "title": "Parseo sin falsos éxitos",
+    "directory": "labs-native/s01-idiomatic-errors",
+    "command": "go test ./labs-native/s01-idiomatic-errors"
+  },
+  {
+    "id": "S02",
+    "slug": "s02-injection",
+    "title": "Inversión de dependencias",
+    "directory": "labs-native/s02-injection",
+    "command": "go test ./labs-native/s02-injection"
+  },
+  {
+    "id": "S03",
+    "slug": "s03-idempotency",
+    "title": "Idempotencia de operaciones",
+    "directory": "labs-native/s03-idempotency",
+    "command": "go test ./labs-native/s03-idempotency"
+  },
+  {
+    "id": "S04",
+    "slug": "s04-domain-state",
+    "title": "Invariantes de dominio",
+    "directory": "labs-native/s04-domain-state",
+    "command": "go test ./labs-native/s04-domain-state"
+  },
+  {
+    "id": "S05",
+    "slug": "s05-worker-pool",
+    "title": "Concurrencia acotada y cancelable",
+    "directory": "labs-native/s05-worker-pool",
+    "command": "go test ./labs-native/s05-worker-pool"
+  },
+  {
+    "id": "S06",
+    "slug": "s06-atomic",
+    "title": "Contadores atómicos",
+    "directory": "labs-native/s06-atomic",
+    "command": "go test ./labs-native/s06-atomic"
+  },
+  {
+    "id": "S07",
+    "slug": "s07-slice-retention",
+    "title": "Evitar retención de memoria",
+    "directory": "labs-native/s07-slice-retention",
+    "command": "go test ./labs-native/s07-slice-retention"
+  },
+  {
+    "id": "S08",
+    "slug": "s08-performance",
+    "title": "Concatenación eficiente",
+    "directory": "labs-native/s08-performance",
+    "command": "go test ./labs-native/s08-performance"
+  },
+  {
+    "id": "S09",
+    "slug": "s09-dedup-events",
+    "title": "Deduplicación de entregas",
+    "directory": "labs-native/s09-dedup-events",
+    "command": "go test ./labs-native/s09-dedup-events"
+  },
+  {
+    "id": "S10",
+    "slug": "s10-inventory",
+    "title": "Reservas de stock sin sobreventa",
+    "directory": "labs-native/s10-inventory",
+    "command": "go test ./labs-native/s10-inventory"
+  },
+  {
+    "id": "S11",
+    "slug": "s11-backoff",
+    "title": "Reintentos con límite",
+    "directory": "labs-native/s11-backoff",
+    "command": "go test ./labs-native/s11-backoff"
+  },
+  {
+    "id": "S12",
+    "slug": "s12-traversal",
+    "title": "Validación de rutas de archivos",
+    "directory": "labs-native/s12-traversal",
+    "command": "go test ./labs-native/s12-traversal"
+  },
+  {
+    "id": "S13",
+    "slug": "s13-clock-testing",
+    "title": "Tiempo determinista",
+    "directory": "labs-native/s13-clock-testing",
+    "command": "go test ./labs-native/s13-clock-testing"
+  },
+  {
+    "id": "S14",
+    "slug": "s14-percentiles",
+    "title": "Percentiles de latencia",
+    "directory": "labs-native/s14-percentiles",
+    "command": "go test ./labs-native/s14-percentiles"
+  },
+  {
+    "id": "S15",
+    "slug": "s15-shutdown",
+    "title": "Apagado con contexto",
+    "directory": "labs-native/s15-shutdown",
+    "command": "go test ./labs-native/s15-shutdown"
+  },
+  {
+    "id": "S16",
+    "slug": "s16-compatibility",
+    "title": "Migración de esquemas",
+    "directory": "labs-native/s16-compatibility",
+    "command": "go test ./labs-native/s16-compatibility"
+  },
+  {
+    "id": "S17",
+    "slug": "s17-review-priority",
+    "title": "Priorización técnica",
+    "directory": "labs-native/s17-review-priority",
+    "command": "go test ./labs-native/s17-review-priority"
+  },
+  {
+    "id": "S18",
+    "slug": "s18-capacity",
+    "title": "Capacity planning",
+    "directory": "labs-native/s18-capacity",
+    "command": "go test ./labs-native/s18-capacity"
+  }
+]

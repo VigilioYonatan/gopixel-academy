@@ -1,0 +1,560 @@
+[
+  {
+    "id": "S01",
+    "slug": "s01-idiomatic-errors",
+    "title": "Contratos y errores idiomáticos",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "No ocultes fallos de conversión con valores por defecto. Un error debe conservar el contexto de la operación y poder inspeccionarse sin comparar textos."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Comprueba que los valores inválidos nunca se convierten silenciosamente en cantidades válidas. Los zero values son útiles cuando su significado está documentado, no cuando sustituyen una validación."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Revisa llamadas a strconv.Atoi, envoltura con fmt.Errorf(\"%w\"), manejo explícito y pruebas table-driven."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un parser que devuelve cero sin error puede permitir pedidos erróneos. Exige que la API indique si la cadena era incorrecta o el valor estaba fuera de rango."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Documenta qué entradas rechazas, qué errores propagarás y cómo evolucionará la API."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"strings\"\n)\n\n// ParseQuantity rejects malformed or nonpositive quantities without hiding errors.\nfunc ParseQuantity(raw string) (int, error) {\n\tn, err := strconv.Atoi(strings.TrimSpace(raw))\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"quantity: %w\", err)\n\t}\n\tif n <= 0 {\n\t\treturn 0, fmt.Errorf(\"quantity must be positive\")\n\t}\n\treturn n, nil\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestParseQuantity(t *testing.T) {\n\tfor _, tt := range []struct {\n\t\tin   string\n\t\twant int\n\t\tfail bool\n\t}{{\" 12 \", 12, false}, {\"oops\", 0, true}, {\"0\", 0, true}, {\"-1\", 0, true}} {\n\t\tgot, e := ParseQuantity(tt.in)\n\t\tif (e != nil) != tt.fail || (!tt.fail && got != tt.want) {\n\t\t\tt.Fatalf(\"%q => %d %v\", tt.in, got, e)\n\t\t}\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s01-idiomatic-errors && go test -race ./s01-idiomatic-errors",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S02",
+    "slug": "s02-injection",
+    "title": "Composición e inversión de dependencias",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Define las interfaces pequeñas cerca del consumidor. El dominio debe depender de capacidades, no de un proveedor concreto de red o almacenamiento."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Inyecta las dependencias como argumentos del constructor y evita crear conexiones ocultas en funciones de negocio. Un fake de tests debe respetar el mismo contrato."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Cambia una implementación real por un fake en las pruebas sin modificar la lógica de negocio."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Una abstracción por cada struct eleva la complejidad sin reducir el acoplamiento."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Justifica el coste de añadir una interfaz y dónde se debe ubicar. El lugar de la interfaz debe reflejar quién consume el contrato y quién puede cambiarlo."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Repository interface{ Save(id string) error }\ntype Service struct{ Repo Repository }\n\nfunc (s Service) Create(id string) error {\n\tif id == \"\" {\n\t\treturn errors.New(\"empty ID\")\n\t}\n\tif s.Repo == nil {\n\t\treturn errors.New(\"repository missing\")\n\t}\n\tif err := s.Repo.Save(id); err != nil {\n\t\treturn fmt.Errorf(\"save: %w\", err)\n\t}\n\treturn nil\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"errors\"\n\t\"testing\"\n)\n\ntype fakeRepo struct {\n\tid  string\n\terr error\n}\n\nfunc (f *fakeRepo) Save(id string) error { f.id = id; return f.err }\nfunc TestCreate(t *testing.T) {\n\tr := &fakeRepo{}\n\tif e := (Service{Repo: r}).Create(\"o-1\"); e != nil || r.id != \"o-1\" {\n\t\tt.Fatal(e, r.id)\n\t}\n\tif e := (Service{Repo: r}).Create(\"\"); e == nil {\n\t\tt.Fatal(\"expected error\")\n\t}\n\tsentinel := errors.New(\"storage failure\")\n\tr.err = sentinel\n\tif !errors.Is((Service{Repo: r}).Create(\"o-2\"), sentinel) {\n\t\tt.Fatal(\"wrapped error lost\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s02-injection && go test -race ./s02-injection",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S03",
+    "slug": "s03-idempotency",
+    "title": "Idempotencia de operaciones",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Un reintento no puede producir un segundo efecto. Usa una clave estable por operación y conserva la primera respuesta vinculada a esa clave."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Resuelve carreras entre solicitudes concurrentes mediante una sección crítica o transacción; la política de expiración también forma parte del contrato."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Reenvía la misma operación después de otras operaciones y verifica que devuelve la respuesta original."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Guardar solo una marca de procesado permite devolver respuestas inconsistentes."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Describe el alcance y ciclo de vida de las claves y qué ocurre ante un timeout."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\ntype receipt struct {\n\tamount        int64\n\toriginalTotal int64\n}\n\ntype PaymentStore struct {\n\tmu    sync.Mutex\n\tseen  map[string]receipt\n\ttotal int64\n}\n\nfunc (p *PaymentStore) Charge(key string, cents int64) (int64, error) {\n\tif key == \"\" || cents <= 0 {\n\t\treturn 0, errors.New(\"invalid payment\")\n\t}\n\tp.mu.Lock()\n\tdefer p.mu.Unlock()\n\tif p.seen == nil {\n\t\tp.seen = make(map[string]receipt)\n\t}\n\tif saved, ok := p.seen[key]; ok {\n\t\tif saved.amount != cents {\n\t\t\treturn p.total, errors.New(\"idempotency conflict\")\n\t\t}\n\t\treturn saved.originalTotal, nil\n\t}\n\tp.total += cents\n\tp.seen[key] = receipt{amount: cents, originalTotal: p.total}\n\treturn p.total, nil\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"sync\"\n\t\"testing\"\n)\n\nfunc TestIdempotency(t *testing.T) {\n\tvar p PaymentStore\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 50; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tif _, err := p.Charge(\"req-1\", 250); err != nil {\n\t\t\t\tt.Error(err)\n\t\t\t}\n\t\t}()\n\t}\n\twg.Wait()\n\tif p.total != 250 {\n\t\tt.Fatalf(\"duplicated: %d\", p.total)\n\t}\n\tif _, err := p.Charge(\"req-2\", 100); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tif original, err := p.Charge(\"req-1\", 250); err != nil || original != 250 {\n\t\tt.Fatal(\"replayed response changed\", original, err)\n\t}\n\tif _, err := p.Charge(\"req-1\", 300); err == nil {\n\t\tt.Fatal(\"key conflict accepted\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s03-idempotency && go test -race ./s03-idempotency",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S04",
+    "slug": "s04-domain-state",
+    "title": "Invariantes y máquinas de estados",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Los cambios de estado pertenecen al dominio, no al controlador HTTP. Modela transiciones permitidas y rechaza las inválidas antes de modificar datos."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "La operación debe ser atómica desde el punto de vista de la entidad. Distingue errores de negocio de problemas de infraestructura."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba transiciones válidas, inválidas, repetidas y límites del estado. Incorpora un caso de transición repetida y verifica que no modifique el estado."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Aceptar cualquier transición produce pedidos entregados antes de pagarse. Incorpora un caso de transición repetida y verifica que no modifique el estado."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Escribe un diagrama de estados y explica las precondiciones de cada transición."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport \"errors\"\n\ntype OrderState string\n\nconst (\n\tPending   OrderState = \"pending\"\n\tPaid      OrderState = \"paid\"\n\tCancelled OrderState = \"cancelled\"\n)\n\ntype Order struct{ State OrderState }\n\nfunc (o *Order) Transition(next OrderState) error {\n\tswitch o.State {\n\tcase Pending:\n\t\tif next != Paid && next != Cancelled {\n\t\t\treturn errors.New(\"invalid transition\")\n\t\t}\n\tcase Paid:\n\t\tif next != Paid {\n\t\t\treturn errors.New(\"paid order immutable\")\n\t\t}\n\tcase Cancelled:\n\t\tif next != Cancelled {\n\t\t\treturn errors.New(\"cancelled order immutable\")\n\t\t}\n\tdefault:\n\t\treturn errors.New(\"unknown state\")\n\t}\n\to.State = next\n\treturn nil\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestTransitions(t *testing.T) {\n\to := Order{State: Pending}\n\tif e := o.Transition(Paid); e != nil {\n\t\tt.Fatal(e)\n\t}\n\tif e := o.Transition(Cancelled); e == nil || o.State != Paid {\n\t\tt.Fatal(\"invalid transition accepted\")\n\t}\n\tif e := (&Order{State: \"invalid\"}).Transition(Paid); e == nil {\n\t\tt.Fatal(\"unknown state accepted\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s04-domain-state && go test -race ./s04-domain-state",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S05",
+    "slug": "s05-worker-pool",
+    "title": "Worker pools cancelables",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Limita el número de goroutines y el tamaño de la cola. Cada productor y consumidor debe respetar cancelación y tener una política de cierre."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Utiliza context.Context para abortar operaciones, propaga el primer error y espera a los workers antes de retornar."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Ensaya cero workers, cancelación durante el envío, error de tarea y saturación; usa go test -race."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un envío a un canal sin receptor puede bloquear el shutdown indefinidamente."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Explica backpressure, semántica de los trabajos interrumpidos y métricas de saturación."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync\"\n)\n\n// Process bounds worker concurrency and terminates when ctx is cancelled.\nfunc Process(ctx context.Context, jobs []int, workers int, fn func(context.Context, int) error) error {\n\tif workers < 1 || fn == nil {\n\t\treturn errors.New(\"invalid configuration\")\n\t}\n\tctx, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\tinput := make(chan int)\n\tvar wg sync.WaitGroup\n\tvar mu sync.Mutex\n\tvar first error\n\tfor i := 0; i < workers; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tfor {\n\t\t\t\tselect {\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\treturn\n\t\t\t\tcase job, ok := <-input:\n\t\t\t\t\tif !ok {\n\t\t\t\t\t\treturn\n\t\t\t\t\t}\n\t\t\t\t\tif e := fn(ctx, job); e != nil {\n\t\t\t\t\t\tmu.Lock()\n\t\t\t\t\t\tif first == nil {\n\t\t\t\t\t\t\tfirst = e\n\t\t\t\t\t\t\tcancel()\n\t\t\t\t\t\t}\n\t\t\t\t\t\tmu.Unlock()\n\t\t\t\t\t\treturn\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\t}\nsend:\n\tfor _, job := range jobs {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tbreak send\n\t\tcase input <- job:\n\t\t}\n\t}\n\tclose(input)\n\twg.Wait()\n\tif first != nil {\n\t\treturn first\n\t}\n\treturn ctx.Err()\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync/atomic\"\n\t\"testing\"\n)\n\nfunc TestWorkerPool(t *testing.T) {\n\tvar active, max atomic.Int32\n\tfn := func(_ context.Context, _ int) error {\n\t\tn := active.Add(1)\n\t\tfor {\n\t\t\tm := max.Load()\n\t\t\tif n <= m || max.CompareAndSwap(m, n) {\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tactive.Add(-1)\n\t\treturn nil\n\t}\n\tif e := Process(context.Background(), []int{1, 2, 3, 4, 5}, 2, fn); e != nil {\n\t\tt.Fatal(e)\n\t}\n\tif max.Load() > 2 {\n\t\tt.Fatal(\"unbounded concurrency\")\n\t}\n\tsentinel := errors.New(\"bad task\")\n\tif !errors.Is(Process(context.Background(), []int{1, 2}, 1, func(context.Context, int) error { return sentinel }), sentinel) {\n\t\tt.Fatal(\"job error lost\")\n\t}\n\tif e := Process(context.Background(), nil, 0, fn); e == nil {\n\t\tt.Fatal(\"invalid workers accepted\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s05-worker-pool && go test -race ./s05-worker-pool",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S06",
+    "slug": "s06-atomic",
+    "title": "Memoria compartida y atomics",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Las operaciones atómicas evitan carreras en variables concretas, pero no vuelven atómicas las invariantes que involucran varios campos."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Usa sync/atomic para contadores simples y Mutex cuando una transición exige varias lecturas y escrituras coordinadas."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Comprueba actualizaciones simultáneas, overflow y resultados con el detector de carreras."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Una ausencia de data races no implica ausencia de race conditions de negocio."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Justifica si conviene mutex, canal, atomic o propiedad exclusiva del estado."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport \"sync/atomic\"\n\ntype Counter struct{ value atomic.Int64 }\n\nfunc (c *Counter) Increment() int64 { return c.value.Add(1) }\nfunc (c *Counter) Load() int64      { return c.value.Load() }\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"sync\"\n\t\"testing\"\n)\n\nfunc TestCounter(t *testing.T) {\n\tvar c Counter\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 20; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tfor j := 0; j < 100; j++ {\n\t\t\t\tc.Increment()\n\t\t\t}\n\t\t}()\n\t}\n\twg.Wait()\n\tif c.Load() != 2000 {\n\t\tt.Fatal(c.Load())\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s06-atomic && go test -race ./s06-atomic",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S07",
+    "slug": "s07-slice-retention",
+    "title": "Retención de memoria y GC",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Un slice pequeño puede mantener viva una backing array enorme. Copia el rango necesario si la vida del dato reducido es mucho más larga."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Comprende escape analysis, lifetime y el impacto de asignaciones antes de intentar optimizar el garbage collector."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba igualdad del resultado y separa mediciones de heap de simples conjeturas."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un sub-slice mantiene referencias a memoria que parecía liberada. Una copia explícita del fragmento reduce la retención, a costa de asignar memoria nueva."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Describe el trade-off de copiar bytes ahora frente a retener memoria durante minutos."
+      }
+    ],
+    "referenceSource": "package lab\n\n// Detach creates a new backing array instead of retaining a large input buffer.\nfunc Detach(input []byte, first int) []byte {\n\tif first < 0 || first > len(input) {\n\t\treturn nil\n\t}\n\tout := make([]byte, first)\n\tcopy(out, input[:first])\n\treturn out\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestDetach(t *testing.T) {\n\tsource := make([]byte, 1000000)\n\tsource[0] = 7\n\tpart := Detach(source, 1)\n\tsource[0] = 9\n\tif len(part) != 1 || part[0] != 7 || cap(part) != 1 {\n\t\tt.Fatal(\"backing array retained or wrong result\")\n\t}\n\tif Detach(source, -1) != nil {\n\t\tt.Fatal(\"bad bound\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s07-slice-retention && go test -race ./s07-slice-retention",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S08",
+    "slug": "s08-performance",
+    "title": "Benchmarking reproducible",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Optimiza después de medir. Los benchmarks deben comparar la misma semántica, trabajar con entradas representativas y reportar asignaciones."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "strings.Builder y Grow pueden reducir reallocations en concatenaciones; no asumas que una versión será siempre más rápida."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Ejecuta go test -run ^$ -bench . -benchmem y repite muestras para evitar conclusiones por ruido."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un benchmark artificial que el compilador optimiza no mide el trabajo real. Conviene medirlo con entradas representativas y dejar evidencia en una prueba de regresión."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Explica cómo interpretar ns/op, B/op y allocs/op y cuándo rechazar una optimización."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"strconv\"\n\t\"strings\"\n)\n\nfunc RenderIDs(ids []int) string {\n\tvar b strings.Builder\n\tb.Grow(len(ids) * 5)\n\tfor i, id := range ids {\n\t\tif i > 0 {\n\t\t\tb.WriteByte(',')\n\t\t}\n\t\tb.WriteString(strconv.Itoa(id))\n\t}\n\treturn b.String()\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestRenderIDs(t *testing.T) {\n\tif got := RenderIDs([]int{2, 10, -1}); got != \"2,10,-1\" {\n\t\tt.Fatal(got)\n\t}\n}\nfunc BenchmarkRenderIDs(b *testing.B) {\n\tdata := make([]int, 1000)\n\tfor i := range data {\n\t\tdata[i] = i\n\t}\n\tb.ReportAllocs()\n\tfor i := 0; i < b.N; i++ {\n\t\t_ = RenderIDs(data)\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s08-performance && go test -race ./s08-performance",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S09",
+    "slug": "s09-dedup-events",
+    "title": "Entrega al menos una vez e idempotencia",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Las colas y reintentos pueden entregar mensajes repetidos. Diseña consumidores idempotentes y claves de evento persistentes."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Un mapa en memoria protege solo a una instancia y se pierde al reiniciar; la deduplicación distribuida exige una fuente durable."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Repite eventos, altera el orden y verifica que los efectos de negocio aparecen una única vez."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Suponer exactly-once de extremo a extremo sin contrato produce cargos duplicados."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Define la ventana de deduplicación, el comportamiento ante crashes y la estrategia de reconciliación."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport \"sync\"\n\ntype Inbox struct {\n\tmu   sync.Mutex\n\tseen map[string]struct{}\n}\n\nfunc (i *Inbox) Accept(eventID string) bool {\n\tif eventID == \"\" {\n\t\treturn false\n\t}\n\ti.mu.Lock()\n\tdefer i.mu.Unlock()\n\tif i.seen == nil {\n\t\ti.seen = make(map[string]struct{})\n\t}\n\tif _, exists := i.seen[eventID]; exists {\n\t\treturn false\n\t}\n\ti.seen[eventID] = struct{}{}\n\treturn true\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"testing\"\n)\n\nfunc TestDedup(t *testing.T) {\n\tvar i Inbox\n\tvar accepted atomic.Int32\n\tvar wg sync.WaitGroup\n\tfor n := 0; n < 100; n++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tif i.Accept(\"e-42\") {\n\t\t\t\taccepted.Add(1)\n\t\t\t}\n\t\t}()\n\t}\n\twg.Wait()\n\tif accepted.Load() != 1 || i.Accept(\"\") {\n\t\tt.Fatal(\"duplicate event accepted\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s09-dedup-events && go test -race ./s09-dedup-events",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S10",
+    "slug": "s10-inventory",
+    "title": "Concurrencia de inventario",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Comprobar stock y descontar en dos transacciones diferentes permite sobreventa. Combina validación y modificación de forma atómica."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Emplea transacciones, bloqueos o actualizaciones condicionales con una política explícita de concurrencia."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba múltiples compradores para una última unidad y comprueba que el stock nunca es negativo."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un mutex local no protege stock cuando existen múltiples réplicas del servicio."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Explica qué garantía necesita el producto y el coste de serializar las compras."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\ntype Inventory struct {\n\tmu    sync.Mutex\n\tstock int\n}\n\nfunc NewInventory(n int) (*Inventory, error) {\n\tif n < 0 {\n\t\treturn nil, errors.New(\"negative stock\")\n\t}\n\treturn &Inventory{stock: n}, nil\n}\nfunc (i *Inventory) Reserve(n int) bool {\n\tif n <= 0 {\n\t\treturn false\n\t}\n\ti.mu.Lock()\n\tdefer i.mu.Unlock()\n\tif n > i.stock {\n\t\treturn false\n\t}\n\ti.stock -= n\n\treturn true\n}\nfunc (i *Inventory) Available() int { i.mu.Lock(); defer i.mu.Unlock(); return i.stock }\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"testing\"\n)\n\nfunc TestConcurrentInventory(t *testing.T) {\n\ti, _ := NewInventory(7)\n\tvar wg sync.WaitGroup\n\tvar sold atomic.Int32\n\tfor n := 0; n < 100; n++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tif i.Reserve(1) {\n\t\t\t\tsold.Add(1)\n\t\t\t}\n\t\t}()\n\t}\n\twg.Wait()\n\tif sold.Load() != 7 || i.Available() != 0 {\n\t\tt.Fatalf(\"sold %d, stock %d\", sold.Load(), i.Available())\n\t}\n\tif i.Reserve(0) {\n\t\tt.Fatal(\"zero reservation\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s10-inventory && go test -race ./s10-inventory",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S11",
+    "slug": "s11-backoff",
+    "title": "Reintentos seguros y backoff",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Reintentar inmediatamente ante sobrecarga genera amplificación y cascadas. Define un presupuesto de reintentos y deadlines."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Añade exponential backoff con jitter y solo reintenta operaciones idempotentes o protegidas por clave."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba el cálculo de intervalos, límites, cancelación y errores no reintentables."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Reintentos ilimitados convierten un fallo breve en una caída completa. Relaciona los intentos de cada cliente con la capacidad de la dependencia degradada."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Calcula cómo se multiplica la carga y decide cuándo rechazar trabajo. Relaciona los intentos de cada cliente con la capacidad de la dependencia degradada."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"time\"\n)\n\nfunc Retry(ctx context.Context, attempts int, step func() error, wait func(time.Duration) error) error {\n\tif attempts < 1 || step == nil || wait == nil {\n\t\treturn errors.New(\"invalid retry\")\n\t}\n\tvar last error\n\tfor i := 0; i < attempts; i++ {\n\t\tif err := ctx.Err(); err != nil {\n\t\t\treturn err\n\t\t}\n\t\tlast = step()\n\t\tif last == nil {\n\t\t\treturn nil\n\t\t}\n\t\tif i+1 < attempts {\n\t\t\td := time.Duration(1<<min(i, 8)) * time.Millisecond\n\t\t\tif err := wait(d); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t}\n\treturn last\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestRetry(t *testing.T) {\n\tn := 0\n\tvar waits []time.Duration\n\terr := Retry(context.Background(), 4, func() error {\n\t\tn++\n\t\tif n < 3 {\n\t\t\treturn errors.New(\"transient\")\n\t\t}\n\t\treturn nil\n\t}, func(d time.Duration) error { waits = append(waits, d); return nil })\n\tif err != nil || n != 3 || len(waits) != 2 || waits[1] != 2*time.Millisecond {\n\t\tt.Fatalf(\"%v %d %v\", err, n, waits)\n\t}\n\tctx, cancel := context.WithCancel(context.Background())\n\tcancel()\n\tif !errors.Is(Retry(ctx, 2, func() error { return nil }, func(time.Duration) error { return nil }), context.Canceled) {\n\t\tt.Fatal(\"cancel ignored\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s11-backoff && go test -race ./s11-backoff",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S12",
+    "slug": "s12-traversal",
+    "title": "Seguridad de rutas y archivos",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "No confíes en rutas proporcionadas por usuarios. Rechaza rutas absolutas y escapes léxicos; las rutas con symlinks requieren controles de resolución y aislamiento adicionales."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "El saneamiento no reemplaza permisos del sistema operativo, controles de acceso ni aislamiento. Una ruta segura léxicamente puede contener un enlace simbólico malicioso."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba ../, rutas absolutas, separadores, entradas vacías y escenarios de symlinks cuando el sistema de archivos esté disponible."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "filepath.Clean por sí solo no impide todos los escapes de un directorio. También deben verificarse enlaces simbólicos y límites de acceso del sistema operativo."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Realiza un modelo de amenazas para acceso a archivos y explica qué garantías no ofrece el ejemplo."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"path/filepath\"\n\t\"strings\"\n)\n\nfunc SafePath(root, userPath string) (string, error) {\n\tif root == \"\" || userPath == \"\" || filepath.IsAbs(userPath) {\n\t\treturn \"\", errors.New(\"invalid path\")\n\t}\n\tclean := filepath.Clean(userPath)\n\tif clean == \"..\" || strings.HasPrefix(clean, \"..\"+string(filepath.Separator)) {\n\t\treturn \"\", errors.New(\"path traversal\")\n\t}\n\treturn filepath.Join(root, clean), nil\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"path/filepath\"\n\t\"testing\"\n)\n\nfunc TestSafePath(t *testing.T) {\n\tfor _, s := range []string{\"../secret\", \"../../a\", \"/etc/passwd\", \"\"} {\n\t\tif _, err := SafePath(\"/tmp/safe\", s); err == nil {\n\t\t\tt.Fatalf(\"accepted %q\", s)\n\t\t}\n\t}\n\tp, err := SafePath(\"/tmp/safe\", \"docs/readme.txt\")\n\tif err != nil || p != filepath.Join(\"/tmp/safe\", \"docs/readme.txt\") {\n\t\tt.Fatal(p, err)\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s12-traversal && go test -race ./s12-traversal",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S13",
+    "slug": "s13-clock-testing",
+    "title": "Pruebas deterministas con reloj inyectado",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Los tests no deberían esperar segundos reales ni depender de horarios del sistema. Inyecta una abstracción de reloj para controlar eventos temporales."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Separar tiempo de negocio de infraestructura permite simular expiraciones y deadlines sin flaky tests."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba justo antes, exactamente en y después de un vencimiento; incluye zonas horarias cuando aplique."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "time.Sleep en tests hace la suite lenta y frágil. Un reloj inyectado permite hacer avanzar el tiempo sin suspender realmente el test."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Escribe una estrategia de tests con límites, fuentes de tiempo y carga temporal."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport \"time\"\n\ntype Clock interface{ Now() time.Time }\ntype ExpiringToken struct{ Expiry time.Time }\n\nfunc (t ExpiringToken) Valid(clock Clock) bool { return clock != nil && clock.Now().Before(t.Expiry) }\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\ntype fixedClock struct{ at time.Time }\n\nfunc (c fixedClock) Now() time.Time { return c.at }\nfunc TestExpiry(t *testing.T) {\n\tat := time.Date(2030, 1, 1, 0, 0, 0, 0, time.UTC)\n\ttok := ExpiringToken{Expiry: at.Add(time.Minute)}\n\tif !tok.Valid(fixedClock{at}) || tok.Valid(fixedClock{at.Add(time.Minute)}) || tok.Valid(nil) {\n\t\tt.Fatal(\"expiry logic\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s13-clock-testing && go test -race ./s13-clock-testing",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S14",
+    "slug": "s14-percentiles",
+    "title": "Latencia y percentiles",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "La media oculta colas largas. Observa distribución y percentiles p95/p99 junto a throughput y tasa de errores."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Calcula percentiles con una definición explícita y no compares métricas tomadas con poblaciones diferentes."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba entradas vacías, ordenamiento, tamaños pequeños y colas largas de distribución."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Optimizar la media mientras empeora p99 perjudica a usuarios reales. Un percentil obtenido de muy pocas observaciones no siempre resulta estable."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Explica qué SLO propondrías y cómo detectarías una regresión. Un percentil obtenido de muy pocas observaciones no siempre resulta estable."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"math\"\n\t\"slices\"\n\t\"time\"\n)\n\n// Percentile returns a nearest-rank percentile; it never mutates the input.\nfunc Percentile(samples []time.Duration, p float64) (time.Duration, error) {\n\tif len(samples) == 0 || p <= 0 || p > 100 || math.IsNaN(p) {\n\t\treturn 0, errors.New(\"invalid percentile\")\n\t}\n\tcopyOf := slices.Clone(samples)\n\tslices.Sort(copyOf)\n\tidx := int(math.Ceil(p/100*float64(len(copyOf)))) - 1\n\treturn copyOf[idx], nil\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestPercentile(t *testing.T) {\n\ts := []time.Duration{5, 1, 9, 3}\n\tgot, err := Percentile(s, 95)\n\tif err != nil || got != 9 || s[0] != 5 {\n\t\tt.Fatal(got, err)\n\t}\n\tif _, err := Percentile(nil, 99); err == nil {\n\t\tt.Fatal(\"empty allowed\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s14-percentiles && go test -race ./s14-percentiles",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S15",
+    "slug": "s15-shutdown",
+    "title": "Apagado seguro de servicios",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Un servicio debe dejar de aceptar trabajo, cancelar tareas apropiadas y esperar operaciones en curso dentro de un límite conocido."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "El orden del cierre importa: detener productores, drenar o rechazar cola, cerrar recursos y reportar errores."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba cancelación, timeout, doble apagado y ausencia de goroutines huérfanas."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Cerrar un canal que otro productor sigue usando puede causar panic. Define quién es dueño del cierre de cada canal y cuándo deja de aceptar nuevas tareas."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Documenta el plan de despliegue, grace period y semántica de trabajos pendientes."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"context\"\n\t\"sync\"\n)\n\ntype Shutdown struct {\n\tonce sync.Once\n\tdone chan struct{}\n}\n\nfunc NewShutdown() *Shutdown { return &Shutdown{done: make(chan struct{})} }\nfunc (s *Shutdown) Stop()    { s.once.Do(func() { close(s.done) }) }\nfunc (s *Shutdown) Wait(ctx context.Context) error {\n\tselect {\n\tcase <-s.done:\n\t\treturn nil\n\tcase <-ctx.Done():\n\t\treturn ctx.Err()\n\t}\n}\n",
+    "referenceTest": "package lab\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"testing\"\n)\n\nfunc TestShutdown(t *testing.T) {\n\ts := NewShutdown()\n\tctx, cancel := context.WithCancel(context.Background())\n\tcancel()\n\tif !errors.Is(s.Wait(ctx), context.Canceled) {\n\t\tt.Fatal(\"expected cancelled\")\n\t}\n\ts.Stop()\n\ts.Stop()\n\tif err := s.Wait(context.Background()); err != nil {\n\t\tt.Fatal(err)\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s15-shutdown && go test -race ./s15-shutdown",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S16",
+    "slug": "s16-compatibility",
+    "title": "Compatibilidad y evolución de contratos",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Una actualización de esquema puede romper clientes anteriores. Introduce cambios de forma gradual y conserva compatibilidad durante la transición."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Usa expand-and-contract, versionado y pruebas con payloads históricos antes de retirar campos."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba datos nuevos y antiguos y observa qué ocurre con campos desconocidos y opcionales."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Renombrar o eliminar un campo sin estrategia rompe consumidores externos. Mantén temporalmente los dos formatos hasta confirmar que los consumidores migraron."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Redacta una ADR de migración con rollback y métricas de adopción. Mantén temporalmente los dos formatos hasta confirmar que los consumidores migraron."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n)\n\ntype User struct {\n\tID          string\n\tDisplayName string\n}\n\nfunc DecodeUser(data []byte) (User, error) {\n\tvar raw struct {\n\t\tID          string `json:\"id\"`\n\t\tName        string `json:\"name\"`\n\t\tDisplayName string `json:\"display_name\"`\n\t}\n\tif err := json.Unmarshal(data, &raw); err != nil {\n\t\treturn User{}, err\n\t}\n\tif raw.ID == \"\" {\n\t\treturn User{}, errors.New(\"missing ID\")\n\t}\n\tname := raw.DisplayName\n\tif name == \"\" {\n\t\tname = raw.Name\n\t}\n\treturn User{ID: raw.ID, DisplayName: name}, nil\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestDecodeUser(t *testing.T) {\n\tfor _, data := range []string{`{\"id\":\"u1\",\"name\":\"Old\"}`, `{\"id\":\"u1\",\"display_name\":\"Old\"}`} {\n\t\tu, e := DecodeUser([]byte(data))\n\t\tif e != nil || u.DisplayName != \"Old\" {\n\t\t\tt.Fatal(u, e)\n\t\t}\n\t}\n\tif _, err := DecodeUser([]byte(`{\"name\":\"missing\"}`)); err == nil {\n\t\tt.Fatal(\"accepted missing id\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s16-compatibility && go test -race ./s16-compatibility",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S17",
+    "slug": "s17-review-priority",
+    "title": "Code review y gestión de riesgos",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Una revisión senior busca corrección, seguridad, mantenibilidad y cambios de comportamiento, no solo formato."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Prioriza hallazgos según probabilidad e impacto; vincula comentarios a pruebas concretas y propone alternativas."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Compara dos riesgos técnicos y comprueba que la prioridad se mantiene bajo criterios explícitos."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Un comentario vago como «esto está mal» no permite corregir ni aprender. Incluye qué prueba fallaría si el riesgo se materializa y cómo reproducirlo."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Escribe un review concreto, con evidencia, nivel de severidad y propuesta verificable."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"slices\"\n)\n\ntype Finding struct {\n\tID         string\n\tImpact     int\n\tLikelihood int\n}\n\nfunc RankFindings(in []Finding) ([]Finding, error) {\n\tout := slices.Clone(in)\n\tfor _, f := range out {\n\t\tif f.ID == \"\" || f.Impact < 1 || f.Impact > 5 || f.Likelihood < 1 || f.Likelihood > 5 {\n\t\t\treturn nil, errors.New(\"invalid finding\")\n\t\t}\n\t}\n\tslices.SortStableFunc(out, func(a, b Finding) int {\n\t\tx := a.Impact * a.Likelihood\n\t\ty := b.Impact * b.Likelihood\n\t\tif x > y {\n\t\t\treturn -1\n\t\t}\n\t\tif x < y {\n\t\t\treturn 1\n\t\t}\n\t\treturn 0\n\t})\n\treturn out, nil\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestRank(t *testing.T) {\n\tin := []Finding{{\"low\", 1, 1}, {\"critical\", 5, 5}}\n\tgot, err := RankFindings(in)\n\tif err != nil || got[0].ID != \"critical\" || in[0].ID != \"low\" {\n\t\tt.Fatal(got, err)\n\t}\n\tif _, err := RankFindings([]Finding{{\"bad\", 0, 1}}); err == nil {\n\t\tt.Fatal(\"bad score\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s17-review-priority && go test -race ./s17-review-priority",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  },
+  {
+    "id": "S18",
+    "slug": "s18-capacity",
+    "title": "Capacidad, cola y backpressure",
+    "sections": [
+      {
+        "title": "Concepto y contexto",
+        "body": "Estima concurrencia necesaria a partir de tasa de llegada y latencia (Ley de Little), y ajusta por utilización objetivo."
+      },
+      {
+        "title": "Invariantes de diseño",
+        "body": "Las fórmulas orientan la capacidad; la variabilidad, colas y recursos compartidos requieren mediciones de carga reales."
+      },
+      {
+        "title": "Pruebas y evidencias",
+        "body": "Prueba valores cero, utilidades inválidas, grandes tasas y condiciones de overflow."
+      },
+      {
+        "title": "Fallo frecuente",
+        "body": "Aumentar workers sin controlar dependencias puede empeorar la latencia y la estabilidad."
+      },
+      {
+        "title": "Defensa de arquitectura (ADR)",
+        "body": "Define SLO, límites de concurrencia, políticas de rechazo y plan de crecimiento."
+      }
+    ],
+    "referenceSource": "package lab\n\nimport (\n\t\"errors\"\n\t\"math\"\n)\n\n// RequiredWorkers rounds up rate * latency / utilization, avoiding silent overflow.\nfunc RequiredWorkers(rps int64, latencyMillis int64, utilization float64) (int64, error) {\n\tif rps < 0 || latencyMillis < 0 || utilization <= 0 || utilization > 1 || math.IsNaN(utilization) {\n\t\treturn 0, errors.New(\"invalid capacity inputs\")\n\t}\n\tresult := math.Ceil((float64(rps) * float64(latencyMillis) / 1000) / utilization)\n\tif result > float64(math.MaxInt64) {\n\t\treturn 0, errors.New(\"overflow\")\n\t}\n\treturn int64(result), nil\n}\n",
+    "referenceTest": "package lab\n\nimport \"testing\"\n\nfunc TestCapacity(t *testing.T) {\n\tv, err := RequiredWorkers(100, 200, 0.5)\n\tif err != nil || v != 40 {\n\t\tt.Fatal(v, err)\n\t}\n\tif _, err := RequiredWorkers(100, 200, 0); err == nil {\n\t\tt.Fatal(\"zero util accepted\")\n\t}\n}\n",
+    "command": "cd labs-native && go test ./s18-capacity && go test -race ./s18-capacity",
+    "disclaimer": "Ejemplo de referencia nativo: no se ejecuta en el navegador; para practicar modifica una copia local y verifica las pruebas."
+  }
+]

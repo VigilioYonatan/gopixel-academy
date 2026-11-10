@@ -1,0 +1,416 @@
+[
+  {
+    "moduleId": "S01",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "code-review",
+    "title": "API pública con comportamiento sorprendente",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "func Parse(s string) (int, error) { n, _ := strconv.Atoi(s); return n, nil }",
+    "diagnoses": [
+      "Cambiar el nombre de Parse por MustParse sin modificar el manejo de errores.",
+      "Se descarta el error de conversión y se devuelve éxito ante entradas inválidas.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Cambiar el nombre de Parse por MustParse sin modificar el manejo de errores.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Propagar el error con contexto y probar entradas no numéricas."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Un contrato que promete error debe distinguir éxito de datos malformados.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S02",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "Dependencia circular entre paquetes",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "package orders // imports payments\npackage payments // imports orders",
+    "diagnoses": [
+      "Combinar todas las capas en un paquete global shared.",
+      "Los límites de dominio permiten imports en ambas direcciones.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Combinar todas las capas en un paquete global shared.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Extraer el contrato mínimo que necesita el consumidor y romper la dependencia circular."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Los paquetes deben mantener dependencias direccionales y contratos acotados.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S03",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "api",
+    "title": "Duplicación de cargos tras timeout",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "POST /charges 504 timeout\nPOST /charges 200 OK\nledger: charge#77, charge#78",
+    "diagnoses": [
+      "Aumentar indefinidamente el timeout de todas las peticiones.",
+      "Se reintenta una operación no idempotente sin identificador estable.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Aumentar indefinidamente el timeout de todas las peticiones.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Incorporar clave de idempotencia persistida y devolver la respuesta previa a reintentos equivalentes."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Las reejecuciones de operaciones de efecto lateral necesitan deduplicación.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S04",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "domain",
+    "title": "Pedido enviado antes de confirmar el pago",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "order.status = shipped\npayment.status = pending",
+    "diagnoses": [
+      "Eliminar todos los estados y usar un booleano delivered.",
+      "La máquina de estados acepta una transición que viola una invariante.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Eliminar todos los estados y usar un booleano delivered.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Definir transiciones válidas y comprobar el estado de pago antes de enviar."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Las invariantes del dominio deben ser explícitas y verificables.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S05",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "concurrency",
+    "title": "Goroutine bloqueada tras cancelar",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "select { case jobs <- task: } // ctx cancelado fuera del select",
+    "diagnoses": [
+      "Cerrar jobs desde cada consumidor al detectar un error.",
+      "El productor puede quedar bloqueado al enviar sin considerar cancelación.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Cerrar jobs desde cada consumidor al detectar un error.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Incluir ctx.Done() en select y definir el cierre de canales por ownership."
+    ],
+    "actionCorrect": 2,
+    "explanation": "La cancelación debe alcanzar las operaciones bloqueantes.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S06",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "memory-model",
+    "title": "Contador compartido con escrituras no sincronizadas",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "go func(){ total++ }()\ngo func(){ total++ }()",
+    "diagnoses": [
+      "Añadir time.Sleep para evitar accesos simultáneos.",
+      "Hay lecturas y escrituras concurrentes sin sincronización.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Añadir time.Sleep para evitar accesos simultáneos.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Usar sync.Mutex o atomic.Int64 y comprobar con -race en Go nativo."
+    ],
+    "actionCorrect": 2,
+    "explanation": "El orden temporal observado no sustituye sincronización.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S07",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "runtime",
+    "title": "Retención inesperada de memoria",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "cache[key] = hugeSlice[:1]\nheap_inuse: 400MB",
+    "diagnoses": [
+      "Aumentar GOGC sin medir la retención.",
+      "Una pequeña subslice mantiene accesible su backing array grande.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Aumentar GOGC sin medir la retención.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Copiar los bytes necesarios a una nueva slice y perfilar heap."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Los objetos accesibles no son liberados por el GC.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S08",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "performance",
+    "title": "p99 aumenta con pool de conexiones saturado",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "p50: 18ms\np99: 2200ms\ndb_wait: 1900ms",
+    "diagnoses": [
+      "Optimizar concatenación de strings sin examinar métricas.",
+      "La latencia de cola de conexiones domina el percentil alto.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Optimizar concatenación de strings sin examinar métricas.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Medir saturación, consultas, concurrencia y ajustar límites con benchmarks."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Primero localizar el cuello de botella con evidencia.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S09",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "distributed",
+    "title": "Evento procesado dos veces",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "consumer: delivery 441\nconsumer restart\nconsumer: delivery 441",
+    "diagnoses": [
+      "Confiar en que el broker nunca reenviará mensajes.",
+      "Una entrega al menos una vez permite duplicados tras reinicio.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Confiar en que el broker nunca reenviará mensajes.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Hacer idempotente el consumidor y persistir identificadores procesados."
+    ],
+    "actionCorrect": 2,
+    "explanation": "La lógica debe tolerar entrega duplicada.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S10",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "database",
+    "title": "Sobreventa de stock bajo concurrencia",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "stock_before=1\norders_accepted=2\nstock_after=-1",
+    "diagnoses": [
+      "Añadir un retraso entre compras para reducir colisiones.",
+      "El chequeo y decremento de stock no son atómicos.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Añadir un retraso entre compras para reducir colisiones.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Usar UPDATE condicional o transacción con control de concurrencia."
+    ],
+    "actionCorrect": 2,
+    "explanation": "La invariante stock >= 0 debe preservarse en la base de datos.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S11",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "resilience",
+    "title": "Tormenta de reintentos",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "requests=100\nattempts=500\nupstream=503",
+    "diagnoses": [
+      "Reintentar sin límite para mejorar éxito inmediato.",
+      "Cada cliente multiplica la carga sobre un servicio ya degradado.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Reintentar sin límite para mejorar éxito inmediato.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Limitar intentos, usar backoff con jitter y presupuestos de reintento."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Los reintentos no acotados amplifican fallos en cascada.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S12",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "security",
+    "title": "Ruta de descarga vulnerable",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "path := filepath.Join(root, userInput)\nos.ReadFile(path)",
+    "diagnoses": [
+      "Eliminar solo la secuencia literal ../ del texto.",
+      "La entrada del usuario puede atravesar directorios no autorizados.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Eliminar solo la secuencia literal ../ del texto.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Validar el destino canónico dentro de la raíz y aplicar controles de autorización."
+    ],
+    "actionCorrect": 2,
+    "explanation": "La seguridad necesita verificar la ruta resultante y su autorización.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S13",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "testing",
+    "title": "Test con falla intermitente",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "go produce(out)\nif got := <-out; got != 3 { t.Fatal(got) }\n// test hangs sporadically",
+    "diagnoses": [
+      "Añadir Sleep de varios segundos a cada test.",
+      "El test no controla terminación ni límite de espera para la goroutine.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Añadir Sleep de varios segundos a cada test.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Usar context o timeout controlado y comprobar cierre, errores y limpieza."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Los tests de concurrencia deben tener límites y gestionar recursos.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S14",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "Latencia p99 disparada",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "p50=30ms p99=3s\ntrace: DB connection wait=2.7s",
+    "diagnoses": [
+      "Reiniciar todos los servicios sin capturar evidencias.",
+      "Las trazas indican espera por conexiones a base de datos.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Reiniciar todos los servicios sin capturar evidencias.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Correlacionar saturación del pool, consultas y tiempo de espera antes de intervenir."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Las trazas permiten ubicar una espera específica y formular hipótesis.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S15",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "operations",
+    "title": "Peticiones cortadas al desplegar",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "SIGTERM received\nprocess exits immediately\nactive_requests=34",
+    "diagnoses": [
+      "Aumentar réplicas sin cambiar la terminación abrupta.",
+      "El proceso termina sin drenar las peticiones en curso.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Aumentar réplicas sin cambiar la terminación abrupta.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Gestionar SIGTERM, readiness y Server.Shutdown con plazo acotado."
+    ],
+    "actionCorrect": 2,
+    "explanation": "El cierre ordenado requiere coordinación con el balanceador.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S16",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "migration",
+    "title": "Cambio de esquema rompe consumidores antiguos",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "old client reads field status\nnew response removed status",
+    "diagnoses": [
+      "Eliminar el campo en todos los ambientes al mismo tiempo.",
+      "Se eliminó un campo antes de migrar todos los consumidores.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Eliminar el campo en todos los ambientes al mismo tiempo.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Aplicar expand-and-contract y compatibilidad durante la transición."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Las migraciones seguras separan cambios compatibles y retiro de contratos.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S17",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "leadership",
+    "title": "Propuesta sin evaluación de riesgos",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "RFC: split 1 service into 12 microservices\nmetrics: unavailable",
+    "diagnoses": [
+      "Aprobar porque microservicios implican mayor seniority.",
+      "Se decide complejidad operativa sin evidenciar límites actuales.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Aprobar porque microservicios implican mayor seniority.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Solicitar requisitos, métricas y trade-offs; considerar monolito modular primero."
+    ],
+    "actionCorrect": 2,
+    "explanation": "Las decisiones técnicas necesitan contexto, costos y alternativas.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  },
+  {
+    "moduleId": "S18",
+    "challengeId": "operations-lab",
+    "version": 1,
+    "kind": "system-design",
+    "title": "Diseño de cola sin límites",
+    "brief": "Lee la evidencia, identifica la causa más probable y elige una mitigación verificable.",
+    "evidence": "incoming=1000/s\nworker_capacity=100/s\nqueue=unbounded",
+    "diagnoses": [
+      "Aumentar el timeout al infinito para absorber la acumulación.",
+      "La tasa de llegada supera continuamente al procesamiento y crece la cola.",
+      "No se puede concluir nada aunque hay evidencia suficiente."
+    ],
+    "diagnosisCorrect": 1,
+    "actions": [
+      "Aumentar el timeout al infinito para absorber la acumulación.",
+      "Ignorar el incidente y documentarlo como no reproducible.",
+      "Definir capacidad, backpressure, rechazo y escalado con SLO medibles."
+    ],
+    "actionCorrect": 2,
+    "explanation": "La capacidad y los presupuestos de recursos deben ser explícitos.",
+    "verification": "static-evidence-diagnosis-and-mitigation"
+  }
+]

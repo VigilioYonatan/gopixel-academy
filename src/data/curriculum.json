@@ -1,0 +1,1749 @@
+[
+  {
+    "id": "B01",
+    "slug": "basic-01",
+    "track": "basic",
+    "title": {
+      "es": "Introducción a Go",
+      "en": "Introduction to Go",
+      "ja": "Go入門",
+      "zh": "Go 入门",
+      "pt": "Introdução ao Go",
+      "fr": "Introduction à Go"
+    },
+    "summary": {
+      "es": "Estructura de paquetes, función main, salida estándar fmt y compilación Go.",
+      "en": "Package structure, main function, fmt standard output and Go compilation.",
+      "ja": "パッケージ構造、main関数、fmt標準出力、Goのコンパイル。",
+      "zh": "包结构、main 函数、fmt 标准输出和 Go 编译。",
+      "pt": "Estrutura de pacotes, função main, saída padrão fmt e compilação Go.",
+      "fr": "Structure des paquets, fonction main, sortie standard fmt et compilation Go."
+    },
+    "status": "implemented"
+  },
+  {
+    "id": "B02",
+    "slug": "basic-02",
+    "track": "basic",
+    "title": {
+      "es": "Variables y constantes",
+      "en": "Variables and constants",
+      "ja": "変数と定数",
+      "zh": "变量与常量",
+      "pt": "Variáveis e constantes",
+      "fr": "Variables et constantes"
+    },
+    "summary": {
+      "es": "Declaración con var y :=, inferencia de tipos, zero values y constantes con iota.",
+      "en": "Declarations with var and :=, type inference, zero values and constants with iota.",
+      "ja": "varと:=による変数宣言、型推論、ゼロ値、iotaを用いた定数定義。",
+      "zh": "使用 var 和 := 进行变量声明、类型推断、零值以及使用 iota 的常量定义。",
+      "pt": "Declaração com var e :=, inferência de tipos, zero values e constantes com iota.",
+      "fr": "Déclaration avec var et :=, inférence de types, valeurs par défaut et constantes avec iota."
+    },
+    "status": "implemented"
+  },
+  {
+    "id": "B03",
+    "slug": "basic-03",
+    "track": "basic",
+    "title": {
+      "es": "Tipos de datos",
+      "en": "Data types",
+      "ja": "データ型",
+      "zh": "数据类型",
+      "pt": "Tipos de dados",
+      "fr": "Types de données"
+    },
+    "summary": {
+      "es": "Enteros, flotantes, booleanos, strings UTF-8, conversiones de tipos y alias.",
+      "en": "Integers, floats, booleans, UTF-8 strings, explicit type conversions and aliases.",
+      "ja": "整数、浮動小数点、真偽値、UTF-8文字列、明示的な型変換とエイリアス。",
+      "zh": "整数、浮点数、布尔值、UTF-8 字符串、显式类型转换及类型别名。",
+      "pt": "Inteiros, pontos flutuantes, booleanos, strings UTF-8, conversão de tipos e apelidos.",
+      "fr": "Entiers, flottants, booléens, chaînes UTF-8, conversions explicites et alias de types."
+    },
+    "status": "implemented"
+  },
+  {
+    "id": "B04",
+    "slug": "basic-04",
+    "track": "basic",
+    "title": {
+      "es": "Condicionales y bucles",
+      "en": "Conditions and loops",
+      "ja": "条件分岐とループ",
+      "zh": "条件与循环",
+      "pt": "Condições e laços",
+      "fr": "Conditions et boucles"
+    },
+    "summary": {
+      "es": "Sentencias if con inicialización, bucle for unificado, switch y control de flujo.",
+      "en": "If statements with short initialization, unified for loop, switch, and control flow.",
+      "ja": "初期化ステートメント付きif、統一されたforループ、switch、制御フロー。",
+      "zh": "带有简短初始化的 if 语句、统一的 for 循环、switch 及流程控制。",
+      "pt": "Declarações if com inicialização curta, laço for unificado, switch e controle de fluxo.",
+      "fr": "Instructions if avec initialisation courte, boucle for unifiée, switch et flux de contrôle."
+    },
+    "status": "implemented"
+  },
+  {
+    "id": "B05",
+    "slug": "basic-05",
+    "track": "basic",
+    "title": {
+      "es": "Funciones",
+      "en": "Functions",
+      "ja": "関数",
+      "zh": "函数",
+      "pt": "Funções",
+      "fr": "Fonctions"
+    },
+    "summary": {
+      "es": "Retornos múltiples, valores nombrados, parámetros variádicos y funciones anónimas.",
+      "en": "Multiple return values, named returns, variadic parameters and anonymous closures.",
+      "ja": "複数の戻り値、名前付き戻り値、可変長引数、無名関数とクロージャ。",
+      "zh": "多返回值、命名返回值、可变参数及匿名闭包函数。",
+      "pt": "Múltiplos retornos, retornos nomeados, parâmetros variádicos e funções anônimas.",
+      "fr": "Valeurs de retour multiples, retours nommés, paramètres variadiques et fermetures."
+    },
+    "status": "implemented"
+  },
+  {
+    "id": "B06",
+    "slug": "basic-06",
+    "track": "basic",
+    "title": {
+      "es": "Arrays y slices",
+      "en": "Arrays and slices",
+      "ja": "配列とスライス",
+      "zh": "数组与切片",
+      "pt": "Arrays e slices",
+      "fr": "Tableaux et slices"
+    },
+    "summary": {
+      "es": "Slices vs arrays, puntero de cabecera, len, cap, make y comportamiento de append.",
+      "en": "Slices vs arrays, slice header pointer, len, cap, make and append reallocation.",
+      "ja": "スライスと配列の差異、ヘッダーポインタ、len、cap、make、appendの再割り当て動作。",
+      "zh": "切片与数组的区别、切片底层指针、len、cap、make 以及 append 扩容机制。",
+      "pt": "Diferença entre slices e arrays, ponteiro de cabeçalho, len, cap, make e append.",
+      "fr": "Différences entre slices et tableaux, pointeur d'en-tête, len, cap, make et append."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B07",
+    "slug": "basic-07",
+    "track": "basic",
+    "title": {
+      "es": "Maps",
+      "en": "Maps",
+      "ja": "マップ",
+      "zh": "映射",
+      "pt": "Maps",
+      "fr": "Maps"
+    },
+    "summary": {
+      "es": "Estructura hash map, clave-valor, operador comma-ok, iteración no determinista y delete.",
+      "en": "Hash map internals, key-value lookup, comma-ok idiom, non-deterministic iteration and delete.",
+      "ja": "ハッシュマップの仕組み、キーと値、comma-ok構文、非決定的な反復、delete関数。",
+      "zh": "哈希表结构、键值查找、comma-ok 惯用语法、无序遍历及 delete 函数。",
+      "pt": "Estrutura de hash maps, chave-valor, idioma comma-ok, iteração e delete.",
+      "fr": "Structure de table de hachage, clé-valeur, syntaxe comma-ok, itération et delete."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B08",
+    "slug": "basic-08",
+    "track": "basic",
+    "title": {
+      "es": "Structs",
+      "en": "Structs",
+      "ja": "構造体",
+      "zh": "结构体",
+      "pt": "Structs",
+      "fr": "Structures"
+    },
+    "summary": {
+      "es": "Definición de estructuras, inicialización por campos, tags JSON y composición por embebido.",
+      "en": "Struct definition, field tags for JSON, field initialization and composition via embedding.",
+      "ja": "構造体の定義、フィールド初期化、JSONタグ、埋め込みによる合成。",
+      "zh": "结构体定义、字段初始化、JSON 标签以及通过组合嵌入复用代码。",
+      "pt": "Definição de structs, inicialização de campos, tags JSON e composição por embutimento.",
+      "fr": "Définition de structures, balises JSON, initialisation des champs et composition intégrée."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B09",
+    "slug": "basic-09",
+    "track": "basic",
+    "title": {
+      "es": "Punteros",
+      "en": "Pointers",
+      "ja": "ポインタ",
+      "zh": "指针",
+      "pt": "Ponteiros",
+      "fr": "Pointeurs"
+    },
+    "summary": {
+      "es": "Operadores & y *, semántica de memoria, paso por valor vs puntero y ausencia de aritmética.",
+      "en": "Address-of (&) and dereference (*) operators, pass-by-value semantics and pointer safety.",
+      "ja": "アドレス演算子(&)と間接参照(*)、値渡しセマンティクス、ポインタ安全性。",
+      "zh": "取地址(&)与解引用(*)运算符、值传递语义、指针安全性与无指针算术。",
+      "pt": "Operadores & e *, semântica de passagem por valor vs ponteiro e segurança de memória.",
+      "fr": "Opérateurs & et *, sémantique de passage par valeur vs pointeur et sécurité mémoire."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B10",
+    "slug": "basic-10",
+    "track": "basic",
+    "title": {
+      "es": "Métodos e interfaces",
+      "en": "Methods and interfaces",
+      "ja": "メソッドとインターフェース",
+      "zh": "方法与接口",
+      "pt": "Métodos e interfaces",
+      "fr": "Méthodes et interfaces"
+    },
+    "summary": {
+      "es": "Receptores por valor y puntero, interfaces implícitas, desacoplamiento y duck typing estático.",
+      "en": "Value vs pointer receivers, implicit interface implementation and static duck typing.",
+      "ja": "値レシーバとポインタレシーバ、暗黙的なインターフェース実装、静的ダックタイピング。",
+      "zh": "值接收者与指针接收者、隐式接口实现、解耦与静态鸭子类型。",
+      "pt": "Receptores por valor e ponteiro, implementação implícita de interfaces e desacoplamento.",
+      "fr": "Récepteurs par valeur et pointeur, implémentation implicite d'interfaces et typage canard."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B11",
+    "slug": "basic-11",
+    "track": "basic",
+    "title": {
+      "es": "Errores y defer",
+      "en": "Errors and defer",
+      "ja": "エラーとdefer",
+      "zh": "错误与 defer",
+      "pt": "Erros e defer",
+      "fr": "Erreurs et defer"
+    },
+    "summary": {
+      "es": "Tipo error como valor explícito, defer para limpieza de recursos, panic y recover controlado.",
+      "en": "Error type as explicit value, defer for deterministic cleanup, panic and guarded recover.",
+      "ja": "明示的な値としてのerror型、確実なリソース解放のためのdefer、panicとrecover。",
+      "zh": "作为显式值的 error 类型、用于确定性资源清理的 defer、panic 与受控 recover。",
+      "pt": "Tipo error como valor explícito, defer para limpeza de recursos, panic e recover.",
+      "fr": "Type error comme valeur explicite, defer pour le nettoyage, panic et recover contrôlé."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "B12",
+    "slug": "basic-12",
+    "track": "basic",
+    "title": {
+      "es": "Proyecto básico: Mini Bank",
+      "en": "Basic project: Mini Bank",
+      "ja": "基礎プロジェクト：ミニバンク",
+      "zh": "基础项目：迷你银行",
+      "pt": "Projeto básico: Mini Bank",
+      "fr": "Projet débutant : Mini Bank"
+    },
+    "summary": {
+      "es": "Proyecto integrador: cuentas bancarias con depósitos, retiros validados, balances y tests.",
+      "en": "Capstone project: bank account ledger with deposits, validated withdrawals, and unit tests.",
+      "ja": "基礎総合プロジェクト：入出金バリデーション、残高照会、単体テスト付き銀行口座システム。",
+      "zh": "基础综合项目：带有充值、提现校验、余额查询及单元测试的微型银行账户系统。",
+      "pt": "Projeto integrador: contas bancárias com depósitos, saques validados, saldos e testes.",
+      "fr": "Projet intégrateur : grand livre bancaire avec dépôts, retraits validés et tests unitaires."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I01",
+    "slug": "intermediate-01",
+    "track": "intermediate",
+    "title": {
+      "es": "Interfaces avanzadas",
+      "en": "Advanced interfaces",
+      "ja": "高度なインターフェース",
+      "zh": "高级接口",
+      "pt": "Interfaces avançadas",
+      "fr": "Interfaces avancées"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I02",
+    "slug": "intermediate-02",
+    "track": "intermediate",
+    "title": {
+      "es": "Genéricos",
+      "en": "Generics",
+      "ja": "ジェネリクス",
+      "zh": "泛型",
+      "pt": "Genéricos",
+      "fr": "Génériques"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I03",
+    "slug": "intermediate-03",
+    "track": "intermediate",
+    "title": {
+      "es": "Paquetes y módulos",
+      "en": "Packages and modules",
+      "ja": "パッケージとモジュール",
+      "zh": "包与模块",
+      "pt": "Pacotes e módulos",
+      "fr": "Packages et modules"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I04",
+    "slug": "intermediate-04",
+    "track": "intermediate",
+    "title": {
+      "es": "Manejo de errores",
+      "en": "Error handling",
+      "ja": "エラーハンドリング",
+      "zh": "错误处理",
+      "pt": "Tratamento de erros",
+      "fr": "Gestion des erreurs"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I05",
+    "slug": "intermediate-05",
+    "track": "intermediate",
+    "title": {
+      "es": "Archivos y streams",
+      "en": "Files and streams",
+      "ja": "ファイルとストリーム",
+      "zh": "文件与流",
+      "pt": "Arquivos e streams",
+      "fr": "Fichiers et flux"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I06",
+    "slug": "intermediate-06",
+    "track": "intermediate",
+    "title": {
+      "es": "JSON y serialización",
+      "en": "JSON and serialization",
+      "ja": "JSONとシリアライズ",
+      "zh": "JSON 与序列化",
+      "pt": "JSON e serialização",
+      "fr": "JSON et sérialisation"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I07",
+    "slug": "intermediate-07",
+    "track": "intermediate",
+    "title": {
+      "es": "HTTP y clientes",
+      "en": "HTTP and clients",
+      "ja": "HTTPとクライアント",
+      "zh": "HTTP 与客户端",
+      "pt": "HTTP e clientes",
+      "fr": "HTTP et clients"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I08",
+    "slug": "intermediate-08",
+    "track": "intermediate",
+    "title": {
+      "es": "APIs REST",
+      "en": "REST APIs",
+      "ja": "REST API",
+      "zh": "REST API",
+      "pt": "APIs REST",
+      "fr": "API REST"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I09",
+    "slug": "intermediate-09",
+    "track": "intermediate",
+    "title": {
+      "es": "SQL y persistencia",
+      "en": "SQL and persistence",
+      "ja": "SQLと永続化",
+      "zh": "SQL 与持久化",
+      "pt": "SQL e persistência",
+      "fr": "SQL et persistance"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I10",
+    "slug": "intermediate-10",
+    "track": "intermediate",
+    "title": {
+      "es": "Testing en Go",
+      "en": "Testing in Go",
+      "ja": "Goのテスト",
+      "zh": "Go 测试",
+      "pt": "Testes em Go",
+      "fr": "Tests en Go"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I11",
+    "slug": "intermediate-11",
+    "track": "intermediate",
+    "title": {
+      "es": "Context y concurrencia inicial",
+      "en": "Context and introductory concurrency",
+      "ja": "contextと並行処理入門",
+      "zh": "Context 与并发入门",
+      "pt": "Context e concorrência inicial",
+      "fr": "Context et concurrence initiale"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "I12",
+    "slug": "intermediate-12",
+    "track": "intermediate",
+    "title": {
+      "es": "Proyecto: TaskFlow API",
+      "en": "Project: TaskFlow API",
+      "ja": "プロジェクト：TaskFlow API",
+      "zh": "项目：TaskFlow API",
+      "pt": "Projeto: TaskFlow API",
+      "fr": "Projet : API TaskFlow"
+    },
+    "summary": {
+      "es": "Interfaces, HTTP, persistencia y testing.",
+      "en": "Interfaces, HTTP, persistence and testing.",
+      "ja": "インターフェース、HTTP、永続化、テスト。",
+      "zh": "接口、HTTP、持久化与测试。",
+      "pt": "Interfaces, HTTP, persistência e testes.",
+      "fr": "Interfaces, HTTP, persistance et tests."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A01",
+    "slug": "advanced-01",
+    "track": "advanced",
+    "title": {
+      "es": "Goroutines avanzadas",
+      "en": "Advanced goroutines",
+      "ja": "高度なgoroutine",
+      "zh": "高级 Goroutine",
+      "pt": "Goroutines avançadas",
+      "fr": "Goroutines avancées"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A02",
+    "slug": "advanced-02",
+    "track": "advanced",
+    "title": {
+      "es": "Channels y patrones",
+      "en": "Channels and patterns",
+      "ja": "チャネルとパターン",
+      "zh": "通道与模式",
+      "pt": "Channels e padrões",
+      "fr": "Canaux et modèles"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A03",
+    "slug": "advanced-03",
+    "track": "advanced",
+    "title": {
+      "es": "Sincronización con sync",
+      "en": "Synchronization with sync",
+      "ja": "syncによる同期",
+      "zh": "使用 sync 同步",
+      "pt": "Sincronização com sync",
+      "fr": "Synchronisation avec sync"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A04",
+    "slug": "advanced-04",
+    "track": "advanced",
+    "title": {
+      "es": "Concurrencia segura",
+      "en": "Safe concurrency",
+      "ja": "安全な並行処理",
+      "zh": "安全并发",
+      "pt": "Concorrência segura",
+      "fr": "Concurrence sûre"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A05",
+    "slug": "advanced-05",
+    "track": "advanced",
+    "title": {
+      "es": "Runtime y garbage collector",
+      "en": "Runtime and garbage collector",
+      "ja": "ランタイムとGC",
+      "zh": "运行时与垃圾回收",
+      "pt": "Runtime e coletor de lixo",
+      "fr": "Runtime et ramasse-miettes"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A06",
+    "slug": "advanced-06",
+    "track": "advanced",
+    "title": {
+      "es": "Benchmark y profiling",
+      "en": "Benchmarking and profiling",
+      "ja": "ベンチマークとプロファイリング",
+      "zh": "基准测试与性能分析",
+      "pt": "Benchmark e profiling",
+      "fr": "Benchmark et profiling"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A07",
+    "slug": "advanced-07",
+    "track": "advanced",
+    "title": {
+      "es": "Redes y protocolos",
+      "en": "Networking and protocols",
+      "ja": "ネットワークとプロトコル",
+      "zh": "网络与协议",
+      "pt": "Redes e protocolos",
+      "fr": "Réseau et protocoles"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A08",
+    "slug": "advanced-08",
+    "track": "advanced",
+    "title": {
+      "es": "SQL avanzado",
+      "en": "Advanced SQL",
+      "ja": "高度なSQL",
+      "zh": "高级 SQL",
+      "pt": "SQL avançado",
+      "fr": "SQL avancé"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A09",
+    "slug": "advanced-09",
+    "track": "advanced",
+    "title": {
+      "es": "Caché y mensajería",
+      "en": "Caching and messaging",
+      "ja": "キャッシュとメッセージング",
+      "zh": "缓存与消息传递",
+      "pt": "Cache e mensageria",
+      "fr": "Cache et messagerie"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A10",
+    "slug": "advanced-10",
+    "track": "advanced",
+    "title": {
+      "es": "Resiliencia",
+      "en": "Resilience",
+      "ja": "回復力",
+      "zh": "弹性设计",
+      "pt": "Resiliência",
+      "fr": "Résilience"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A11",
+    "slug": "advanced-11",
+    "track": "advanced",
+    "title": {
+      "es": "Docker y CI/CD",
+      "en": "Docker and CI/CD",
+      "ja": "DockerとCI/CD",
+      "zh": "Docker 与 CI/CD",
+      "pt": "Docker e CI/CD",
+      "fr": "Docker et CI/CD"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "A12",
+    "slug": "advanced-12",
+    "track": "advanced",
+    "title": {
+      "es": "Proyecto: motor concurrente",
+      "en": "Project: concurrent engine",
+      "ja": "プロジェクト：並行処理エンジン",
+      "zh": "项目：并发引擎",
+      "pt": "Projeto: motor concorrente",
+      "fr": "Projet : moteur concurrent"
+    },
+    "summary": {
+      "es": "Concurrencia, runtime, protocolos y optimización.",
+      "en": "Concurrency, runtime, protocols and optimization.",
+      "ja": "並行処理、ランタイム、プロトコル、最適化。",
+      "zh": "并发、运行时、协议和优化。",
+      "pt": "Concorrência, runtime, protocolos e otimização.",
+      "fr": "Concurrence, runtime, protocoles et optimisation."
+    },
+    "status": "planned"
+  },
+  {
+    "id": "S01",
+    "slug": "senior-01",
+    "track": "senior",
+    "title": {
+      "es": "Go idiomático y refactoring",
+      "en": "Idiomatic Go and refactoring",
+      "ja": "慣用的なGoとリファクタリング",
+      "zh": "惯用 Go 与重构",
+      "pt": "Go idiomático e refatoração",
+      "fr": "Go idiomatique et refactoring"
+    },
+    "summary": {
+      "es": "Eliminar complejidad accidental, interfaces mínimas, flat code y refactorización idiomática.",
+      "en": "Eliminating accidental complexity, minimal interfaces, flat code, and idiomatic refactoring.",
+      "ja": "偶発的複雑さの排除、最小限のインターフェース、平坦なコード、慣用的なリファクタリング。",
+      "zh": "消除偶然复杂度、极简接口、扁平代码与惯用 Go 重构实践。",
+      "pt": "Eliminar complexidade acidental, interfaces mínimas, código plano e refatoração idiomática.",
+      "fr": "Élimination de la complexité accidentelle, interfaces minimales et refactorisation idiomatique."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "review",
+      "scenario": {
+        "es": "Refactorizar un servicio con interfaces enormes y dependencias innecesarias.",
+        "en": "Refactor a service with oversized interfaces and unnecessary dependencies.",
+        "ja": "慣用的なGoとリファクタリングの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与惯用 Go 与重构相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Go idiomático e refatoração; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Go idiomatique et refactoring ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S02",
+    "slug": "senior-02",
+    "track": "senior",
+    "title": {
+      "es": "Arquitectura modular y hexagonal",
+      "en": "Modular and hexagonal architecture",
+      "ja": "モジュラー・ヘキサゴナル設計",
+      "zh": "模块化与六边形架构",
+      "pt": "Arquitetura modular e hexagonal",
+      "fr": "Architecture modulaire et hexagonale"
+    },
+    "summary": {
+      "es": "Inversión de dependencias, desacoplamiento de capas, puertos y adaptadores en sistemas Go.",
+      "en": "Dependency inversion, clean domain isolation, ports and adapters in Go enterprise systems.",
+      "ja": "依存性逆転の原則、クリーンなドメイン分離、Go製エンタープライズでのポート＆アダプタ。",
+      "zh": "依赖倒置原则、领域层完全解耦、Go 企业级系统中的端口与适配器架构。",
+      "pt": "Inversão de dependências, isolamento de domínio limpo, portas e adaptadores em Go.",
+      "fr": "Inversion de dépendance, isolation propre du domaine, ports et adaptateurs en Go."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "architecture",
+      "scenario": {
+        "es": "Separar un monolito por capacidades sin introducir complejidad accidental.",
+        "en": "Separate a monolith by capability without introducing accidental complexity.",
+        "ja": "モジュラー・ヘキサゴナル設計の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与模块化与六边形架构相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Arquitetura modular e hexagonal; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Architecture modulaire et hexagonale ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S03",
+    "slug": "senior-03",
+    "track": "senior",
+    "title": {
+      "es": "Diseño profesional de APIs",
+      "en": "Professional API design",
+      "ja": "プロフェッショナルAPI設計",
+      "zh": "专业 API 设计",
+      "pt": "Design profissional de APIs",
+      "fr": "Conception professionnelle d’API"
+    },
+    "summary": {
+      "es": "Contratos REST y RPC robustos, idempotencia, claves de request, versionado y error handling.",
+      "en": "Robust REST & RPC contracts, idempotency keys, request tracing, versioning, and error codes.",
+      "ja": "堅牢なREST・RPC規約、冪等性キー、リクエスト追跡、バージョニングとエラーハンドリング。",
+      "zh": "健壮的 REST 与 RPC 契约、幂等性键、请求追踪、API 版本控制与结构化错误码。",
+      "pt": "Contratos REST e RPC robustos, chaves de idempotência, versionamento e tratamento de erros.",
+      "fr": "Contrats d'API REST et RPC robustes, clés d'idempotence, versionnage et gestion d'erreurs."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "architecture",
+      "scenario": {
+        "es": "Diseñar una API de pagos idempotente y compatible hacia atrás.",
+        "en": "Design an idempotent payment API with backwards compatibility.",
+        "ja": "プロフェッショナルAPI設計の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与专业 API 设计相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Design profissional de APIs; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Conception professionnelle d’API ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S04",
+    "slug": "senior-04",
+    "track": "senior",
+    "title": {
+      "es": "Modelado del dominio",
+      "en": "Domain modeling",
+      "ja": "ドメインモデリング",
+      "zh": "领域建模",
+      "pt": "Modelagem de domínio",
+      "fr": "Modélisation du domaine"
+    },
+    "summary": {
+      "es": "Entidades ricas, value objects, invariantes estrictas y transiciones de estado deterministas.",
+      "en": "Rich domain entities, immutable value objects, strict invariants, and state machines.",
+      "ja": "リッチなドメインエンティティ、値オブジェクト、厳格な不変条件、決定論的ステートマシン。",
+      "zh": "富领域实体、不可变值对象、严格领域不变量与确定性状态机转换。",
+      "pt": "Entidades de domínio ricas, value objects imutáveis, invariantes estritas e máquinas de estado.",
+      "fr": "Entités riches, value objects immuables, invariants stricts et transitions d'états."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "architecture",
+      "scenario": {
+        "es": "Modelar pedidos, reservas e invariantes bajo operaciones simultáneas.",
+        "en": "Model orders, reservations and invariants under concurrent operations.",
+        "ja": "ドメインモデリングの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与领域建模相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Modelagem de domínio; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Modélisation du domaine ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S05",
+    "slug": "senior-05",
+    "track": "senior",
+    "title": {
+      "es": "Concurrencia de producción",
+      "en": "Production concurrency",
+      "ja": "本番環境の並行処理",
+      "zh": "生产环境并发",
+      "pt": "Concorrência em produção",
+      "fr": "Concurrence en production"
+    },
+    "summary": {
+      "es": "Worker pools con backpressure, límites de saturación, canales bounded y cancelación limpia.",
+      "en": "Worker pools with backpressure, saturation ceilings, bounded channels, and graceful drain.",
+      "ja": "バックプレッシャー付きワーカープール、飽和限界値、有界チャネル、安全なグレースフルドレイン。",
+      "zh": "具备背压机制的 Worker Pool、并发饱和阈值、有界通道与平滑退出排空。",
+      "pt": "Worker pools com backpressure, limites de saturação, canais limitados e drenagem graciosa.",
+      "fr": "Worker pools avec contre-pression, plafonds de saturation et arrêt gracieux."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "debug",
+      "scenario": {
+        "es": "Corregir un worker pool con fugas, saturación y cancelaciones.",
+        "en": "Fix a worker pool with leaks, overload and cancellation.",
+        "ja": "本番環境の並行処理の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与生产环境并发相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Concorrência em produção; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Concurrence en production ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S06",
+    "slug": "senior-06",
+    "track": "senior",
+    "title": {
+      "es": "Memory Model y atomics",
+      "en": "Memory model and atomics",
+      "ja": "メモリモデルとアトミック操作",
+      "zh": "内存模型与原子操作",
+      "pt": "Modelo de memória e atômicos",
+      "fr": "Modèle mémoire et atomiques"
+    },
+    "summary": {
+      "es": "Semántica happens-before, operaciones sync/atomic, orden de memoria y prevención de data races.",
+      "en": "Go happens-before guarantee, sync/atomic primitives, memory reordering, and race prevention.",
+      "ja": "Goのhappens-before保証、sync/atomicプリミティブ、メモリ並べ替え、データレース防止。",
+      "zh": "Go happens-before 原则、sync/atomic 原语、内存重排分析与数据竞争消除。",
+      "pt": "Garantia happens-before, primitivas sync/atomic, reordenação de memória e prevenção de data races.",
+      "fr": "Garantie happens-before, primitives sync/atomic, réordonnancement mémoire et prévention des data races."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "debug",
+      "scenario": {
+        "es": "Encontrar una carrera lógica que no necesariamente detecta el race detector.",
+        "en": "Find a logical race that a race detector might not catch.",
+        "ja": "メモリモデルとアトミック操作の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与内存模型与原子操作相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Modelo de memória e atômicos; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Modèle mémoire et atomiques ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S07",
+    "slug": "senior-07",
+    "track": "senior",
+    "title": {
+      "es": "Runtime, memoria y GC",
+      "en": "Runtime, memory and GC",
+      "ja": "ランタイム・メモリ・GC",
+      "zh": "运行时、内存与 GC",
+      "pt": "Runtime, memória e GC",
+      "fr": "Runtime, mémoire et GC"
+    },
+    "summary": {
+      "es": "Análisis de escape, retención de punteros, comportamiento del Garbage Collector y GOMAXPROCS.",
+      "en": "Escape analysis (-gcflags -m), pointer retention, Garbage Collector pacing, and GOMAXPROCS.",
+      "ja": "エスケープ解析、ポインタ保持、ガベージコレクタのペーシング、GOMAXPROCSチューニング。",
+      "zh": "逃逸分析诊断、堆指针驻留机制、三色垃圾回收器调步算法与 GOMAXPROCS 调优。",
+      "pt": "Análise de escape, retenção de ponteiros, ritmo do Garbage Collector e ajuste de GOMAXPROCS.",
+      "fr": "Analyse d'échappement, rétention des pointeurs, rythme du Garbage Collector et GOMAXPROCS."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "incident",
+      "scenario": {
+        "es": "Investigar el crecimiento sostenido del heap y el coste de GC.",
+        "en": "Investigate sustained heap growth and garbage collection cost.",
+        "ja": "ランタイム・メモリ・GCの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与运行时、内存与 GC相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Runtime, memória e GC; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Runtime, mémoire et GC ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S08",
+    "slug": "senior-08",
+    "track": "senior",
+    "title": {
+      "es": "Ingeniería de rendimiento",
+      "en": "Performance engineering",
+      "ja": "性能エンジニアリング",
+      "zh": "性能工程",
+      "pt": "Engenharia de performance",
+      "fr": "Ingénierie de performance"
+    },
+    "summary": {
+      "es": "Perfiles pprof de CPU/memoria, benchmarks de asignaciones por op y latencias percentiles p99.",
+      "en": "CPU & heap pprof analysis, allocation benchmarks (b.ReportAllocs), and p99 latency tuning.",
+      "ja": "CPUおよびヒープのpprofプロファイリング、アロケーションベンチマーク、p99レイテンシ改善。",
+      "zh": "CPU 与堆内存 pprof 火焰图分析、内存分配基准测试及 p99 延迟极端优化。",
+      "pt": "Perfis pprof de CPU/memória, benchmarks de alocação por operação e otimização de latência p99.",
+      "fr": "Profils pprof CPU et mémoire, benchmarks d'allocation et réduction de la latence p99."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "performance",
+      "scenario": {
+        "es": "Comparar optimizaciones usando perfiles y benchmarks reproducibles.",
+        "en": "Compare optimizations using profiles and reproducible benchmarks.",
+        "ja": "性能エンジニアリングの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与性能工程相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Engenharia de performance; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Ingénierie de performance ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S09",
+    "slug": "senior-09",
+    "track": "senior",
+    "title": {
+      "es": "Sistemas distribuidos",
+      "en": "Distributed systems",
+      "ja": "分散システム",
+      "zh": "分布式系统",
+      "pt": "Sistemas distribuídos",
+      "fr": "Systèmes distribués"
+    },
+    "summary": {
+      "es": "Garantías de entrega at-least-once, desduplicación, compensación de transacciones y outbox pattern.",
+      "en": "At-least-once delivery guarantees, deduplication, transactional outbox, and compensations.",
+      "ja": "少なくとも1回の到達保証、重複排除、トランザクショナルアウトボックス、補償トランザクション。",
+      "zh": "至少一次投递保证、幂等去重表、本地事务发件箱模式与分布式补偿事务。",
+      "pt": "Garantias at-least-once, desduplicação, padrão transactional outbox e transações de compensação.",
+      "fr": "Garanties au moins une fois, déduplication, motif Transactional Outbox et compensations."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "architecture",
+      "scenario": {
+        "es": "Diseñar procesamiento de mensajes tolerante a duplicados y reordenamiento.",
+        "en": "Design message processing that tolerates duplicates and reordering.",
+        "ja": "分散システムの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与分布式系统相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Sistemas distribuídos; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Systèmes distribués ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S10",
+    "slug": "senior-10",
+    "track": "senior",
+    "title": {
+      "es": "Datos y consistencia",
+      "en": "Data and consistency",
+      "ja": "データと整合性",
+      "zh": "数据与一致性",
+      "pt": "Dados e consistência",
+      "fr": "Données et cohérence"
+    },
+    "summary": {
+      "es": "Niveles de aislamiento SQL, contención de locks, deadlocks y consistencia eventual vs estricta.",
+      "en": "SQL isolation levels, row lock contention, deadlocks, and eventual vs strong consistency.",
+      "ja": "SQLトランザクション分離レベル、行ロック競合、デッドロック回避、結果整合性と強整合性。",
+      "zh": "SQL 事务隔离级别、行锁争用排查、死锁预防以及最终一致性与强一致性权衡。",
+      "pt": "Níveis de isolamento SQL, contenção de locks, deadlocks e consistência eventual vs forte.",
+      "fr": "Niveaux d'isolation SQL, contention des verrous, impasses et cohérence à terme vs forte."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "incident",
+      "scenario": {
+        "es": "Evitar sobreventa con transacciones e índices apropiados.",
+        "en": "Prevent overselling using transactions and proper indexes.",
+        "ja": "データと整合性の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与数据与一致性相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Dados e consistência; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Données et cohérence ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S11",
+    "slug": "senior-11",
+    "track": "senior",
+    "title": {
+      "es": "Resiliencia y fallos parciales",
+      "en": "Resilience and partial failures",
+      "ja": "耐障害性と部分的障害",
+      "zh": "弹性与局部故障",
+      "pt": "Resiliência e falhas parciais",
+      "fr": "Résilience et défaillances partielles"
+    },
+    "summary": {
+      "es": "Circuit breaker, retries con exponential backoff y jitter, timeouts de context y fail-safe.",
+      "en": "Circuit breakers, exponential backoff with jitter, strict context timeouts, and fail-safe fallbacks.",
+      "ja": "サーキットブレーカー、ジッター付き指数バックオフ再試行、コンテキストタイムアウト。",
+      "zh": "熔断器模式、带全抖动的指数退避重试、严格的 Context 超时与降级容错。",
+      "pt": "Circuit breakers, retentativas com backoff exponencial e jitter, timeouts e fail-safe.",
+      "fr": "Coupe-circuits, retentatives avec temporisation exponentielle et gigue, et timeouts stricts."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "incident",
+      "scenario": {
+        "es": "Proteger servicios frente a timeouts, retries y fallos en cascada.",
+        "en": "Protect services against timeouts, retries and cascading failures.",
+        "ja": "耐障害性と部分的障害の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与弹性与局部故障相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Resiliência e falhas parciais; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Résilience et défaillances partielles ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S12",
+    "slug": "senior-12",
+    "track": "senior",
+    "title": {
+      "es": "Seguridad backend",
+      "en": "Backend security",
+      "ja": "バックエンドセキュリティ",
+      "zh": "后端安全",
+      "pt": "Segurança backend",
+      "fr": "Sécurité backend"
+    },
+    "summary": {
+      "es": "Validación defensiva de inputs, sanitización SQL/NoSQL, control de cabeceras HTTP y zero trust.",
+      "en": "Defensive input validation, injection prevention, cryptographic hashing, and zero trust policies.",
+      "ja": "防御的入力検証、SQL・NoSQLインジェクション防止、暗号学的ハッシュ、ゼロトラスト方針。",
+      "zh": "防御性输入校验、SQL与NoSQL注入防护、抗碰撞加密哈希与服务端零信任原则。",
+      "pt": "Validação defensiva de entradas, prevenção de injeção, hashing seguro e zero trust.",
+      "fr": "Validation défensive des entrées, prévention des injections et politiques zéro confiance."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "security",
+      "scenario": {
+        "es": "Auditar autenticación, autorización, entradas y secretos de una API.",
+        "en": "Audit API authentication, authorization, inputs and secrets.",
+        "ja": "バックエンドセキュリティの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与后端安全相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Segurança backend; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Sécurité backend ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S13",
+    "slug": "senior-13",
+    "track": "senior",
+    "title": {
+      "es": "Testing de sistemas complejos",
+      "en": "Testing complex systems",
+      "ja": "複雑なシステムのテスト",
+      "zh": "复杂系统测试",
+      "pt": "Testes de sistemas complexos",
+      "fr": "Tests de systèmes complexes"
+    },
+    "summary": {
+      "es": "Fuzzing nativo en Go, tests deterministas de concurrencia, flag -race y simulación de fallos.",
+      "en": "Native Go fuzzing (testing.F), deterministic concurrency testing, -race detector, and chaos mocks.",
+      "ja": "ネイティブGoファジング、決定論的並行テスト、-race検出器、障害注入モック。",
+      "zh": "原生 Go 模糊测试 (testing.F)、确定性并发测试、-race 竞态检测与故障注入模拟。",
+      "pt": "Fuzzing nativo em Go, testes determinísticos de concorrência, flag -race e injeção de falhas.",
+      "fr": "Fuzzing natif en Go, tests déterministes de concurrence, détecteur -race et simulations."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "testing",
+      "scenario": {
+        "es": "Eliminar flaky tests y definir pruebas de fallos parciales.",
+        "en": "Eliminate flaky tests and define tests for partial failures.",
+        "ja": "複雑なシステムのテストの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与复杂系统测试相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Testes de sistemas complexos; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Tests de systèmes complexes ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S14",
+    "slug": "senior-14",
+    "track": "senior",
+    "title": {
+      "es": "Observabilidad e incidentes",
+      "en": "Observability and incidents",
+      "ja": "可観測性とインシデント",
+      "zh": "可观测性与事故",
+      "pt": "Observabilidade e incidentes",
+      "fr": "Observabilité et incidents"
+    },
+    "summary": {
+      "es": "Logs estructurados con slog, métricas RED/USE, trazas distribuidas y runbooks de guardia.",
+      "en": "Structured logging with slog, RED/USE metrics, distributed tracing, and on-call runbooks.",
+      "ja": "slogによる構造化ログ、RED/USEメトリクス、分散トレーシング、オンコール用ランブック。",
+      "zh": "使用 slog 的结构化日志、RED/USE 监控指标体系、分布式链路追踪与值班故障应急手册。",
+      "pt": "Logs estruturados com slog, métricas RED/USE, rastreamento distribuído e runbooks de plantão.",
+      "fr": "Journalisation structurée avec slog, métriques RED/USE, traçage distribué et runbooks d'astreinte."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "incident",
+      "scenario": {
+        "es": "Diagnosticar el incremento de latencia p99 con señales observables.",
+        "en": "Diagnose rising p99 latency using observable signals.",
+        "ja": "可観測性とインシデントの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与可观测性与事故相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Observabilidade e incidentes; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Observabilité et incidents ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S15",
+    "slug": "senior-15",
+    "track": "senior",
+    "title": {
+      "es": "Despliegue y operaciones",
+      "en": "Deployment and operations",
+      "ja": "デプロイと運用",
+      "zh": "部署与运维",
+      "pt": "Implantação e operações",
+      "fr": "Déploiement et opérations"
+    },
+    "summary": {
+      "es": "Compilación multi-etapa Docker scratch, healthchecks k8s, rolling updates y graceful shutdown.",
+      "en": "Scratch-based multi-stage Docker builds, Kubernetes probes, rolling updates, and graceful shutdown.",
+      "ja": "マルチステージDocker scratchビルド、Kubernetesプローブ、ローリングアップデート、正常終了。",
+      "zh": "基于 scratch 的极简多阶段 Docker 构建、K8s 探针配置、滚动发布与优雅停机排空。",
+      "pt": "Builds Docker scratch multi-estágio, probes de Kubernetes, rolling updates e graceful shutdown.",
+      "fr": "Builds Docker scratch multi-étapes, sondes Kubernetes, déploiements continus et arrêt gracieux."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "operations",
+      "scenario": {
+        "es": "Preparar un despliegue reversible sin interrumpir solicitudes activas.",
+        "en": "Prepare a reversible deployment without interrupting live requests.",
+        "ja": "デプロイと運用の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与部署与运维相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Implantação e operações; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Déploiement et opérations ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S16",
+    "slug": "senior-16",
+    "track": "senior",
+    "title": {
+      "es": "Migraciones y mantenimiento",
+      "en": "Migrations and maintenance",
+      "ja": "移行と保守",
+      "zh": "迁移与维护",
+      "pt": "Migrações e manutenção",
+      "fr": "Migrations et maintenance"
+    },
+    "summary": {
+      "es": "Evolución de esquemas backward-compatible, expand & contract, migraciones online y deuda técnica.",
+      "en": "Backward-compatible schema migrations, expand-and-contract pattern, and technical debt retirement.",
+      "ja": "後方互換性のあるスキーマ移行、expand and contractパターン、無停止移行、技術的負債解消。",
+      "zh": "向后兼容的数据库结构演进、扩充与收缩 (Expand & Contract) 双写迁移与技术债务清偿。",
+      "pt": "Migrações de esquema compatíveis com versões anteriores, padrão expand & contract e dívida técnica.",
+      "fr": "Migrations de schéma rétrocompatibles, motif expand-and-contract et gestion de la dette."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "review",
+      "scenario": {
+        "es": "Modernizar un servicio legado y mantener contratos públicos.",
+        "en": "Modernize a legacy service while preserving public contracts.",
+        "ja": "移行と保守の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与迁移与维护相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Migrações e manutenção; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Migrations et maintenance ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S17",
+    "slug": "senior-17",
+    "track": "senior",
+    "title": {
+      "es": "Liderazgo técnico",
+      "en": "Technical leadership",
+      "ja": "技術リーダーシップ",
+      "zh": "技术领导力",
+      "pt": "Liderança técnica",
+      "fr": "Leadership technique"
+    },
+    "summary": {
+      "es": "Redacción de ADRs (Architecture Decision Records), trade-offs de ingeniería y code review mentor.",
+      "en": "Writing Architecture Decision Records (ADRs), technical trade-off evaluation, and senior review.",
+      "ja": "アーキテクチャ決定記録 (ADR) の策定、技術的トレードオフの評価、シニアコードレビュー指導。",
+      "zh": "架构决策记录 (ADR) 规范撰写、技术权衡评估矩阵以及资深工程代码审查指导。",
+      "pt": "Redação de ADRs (Architecture Decision Records), avaliação de trade-offs e mentoria de code review.",
+      "fr": "Rédaction d'ADR (Architecture Decision Records), compromis techniques et revue de code de mentor."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "review",
+      "scenario": {
+        "es": "Revisar un RFC y justificar decisiones con un ADR.",
+        "en": "Review an RFC and justify decisions with an ADR.",
+        "ja": "技術リーダーシップの本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与技术领导力相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Liderança técnica; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Leadership technique ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "S18",
+    "slug": "senior-18",
+    "track": "senior",
+    "title": {
+      "es": "Examen final de System Design",
+      "en": "Final system design exam",
+      "ja": "システム設計最終試験",
+      "zh": "系统设计期末考核",
+      "pt": "Exame final de design de sistemas",
+      "fr": "Examen final de conception système"
+    },
+    "summary": {
+      "es": "Defensa arquitectónica completa: throughput, latencia p99, failover multi-región y consistencia.",
+      "en": "Comprehensive System Design capstone: SLA/SLO sizing, multi-region failover, and trade-off defense.",
+      "ja": "総合システム設計キャップストーン：SLA/SLOサイジング、マルチリージョン障害復旧、設計防衛。",
+      "zh": "高级系统架构毕业考评：SLA/SLO 容量核算、多可用区故障容灾架构设计与权衡答辩。",
+      "pt": "Defesa arquitetural completa: dimensionamento SLA/SLO, failover multirregião e consistência.",
+      "fr": "Défense architecturale complète : dimensionnement SLA/SLO, basculement multirégion et cohérence."
+    },
+    "status": "planned",
+    "challenge": {
+      "kind": "architecture",
+      "scenario": {
+        "es": "Diseñar una plataforma de trabajos distribuida bajo restricciones reales.",
+        "en": "Design a distributed job platform under realistic constraints.",
+        "ja": "システム設計最終試験の本番環境の課題を分析し、制約、リスク、代替案を説明してください。",
+        "zh": "分析与系统设计期末考核相关的生产问题，解释约束、风险和备选方案。",
+        "pt": "Analise um cenário de produção sobre Exame final de design de sistemas; explique restrições, riscos e alternativas.",
+        "fr": "Analysez un scénario de production sur Examen final de conception système ; expliquez contraintes, risques et alternatives."
+      },
+      "criteria": [
+        "correctness",
+        "reliability",
+        "security",
+        "performance",
+        "maintainability",
+        "reasoning"
+      ]
+    }
+  },
+  {
+    "id": "F01",
+    "slug": "frameworks-01",
+    "track": "frameworks",
+    "title": {
+      "es": "HTTP estándar (net/http)",
+      "en": "Standard HTTP (net/http)",
+      "ja": "標準HTTP（net/http）",
+      "zh": "标准 HTTP（net/http）",
+      "pt": "HTTP padrão (net/http)",
+      "fr": "HTTP standard (net/http)"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "net/http",
+      "httptest",
+      "ServeMux"
+    ]
+  },
+  {
+    "id": "F02",
+    "slug": "frameworks-02",
+    "track": "frameworks",
+    "title": {
+      "es": "Gin Mastery",
+      "en": "Gin Mastery",
+      "ja": "Ginマスター",
+      "zh": "Gin 精通",
+      "pt": "Domínio de Gin",
+      "fr": "Maîtrise de Gin"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "Gin",
+      "binding",
+      "middleware"
+    ]
+  },
+  {
+    "id": "F03",
+    "slug": "frameworks-03",
+    "track": "frameworks",
+    "title": {
+      "es": "Chi Essentials",
+      "en": "Chi Essentials",
+      "ja": "Chi基礎",
+      "zh": "Chi 基础",
+      "pt": "Fundamentos de Chi",
+      "fr": "Essentiels de Chi"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "Chi",
+      "routing",
+      "context"
+    ]
+  },
+  {
+    "id": "F04",
+    "slug": "frameworks-04",
+    "track": "frameworks",
+    "title": {
+      "es": "Echo Backend",
+      "en": "Echo Backend",
+      "ja": "Echoバックエンド",
+      "zh": "Echo 后端",
+      "pt": "Backend com Echo",
+      "fr": "Backend avec Echo"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "Echo",
+      "handlers",
+      "validation"
+    ]
+  },
+  {
+    "id": "F05",
+    "slug": "frameworks-05",
+    "track": "frameworks",
+    "title": {
+      "es": "Fiber Backend",
+      "en": "Fiber Backend",
+      "ja": "Fiberバックエンド",
+      "zh": "Fiber 后端",
+      "pt": "Backend com Fiber",
+      "fr": "Backend avec Fiber"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "Fiber",
+      "fasthttp",
+      "middleware"
+    ]
+  },
+  {
+    "id": "F06",
+    "slug": "frameworks-06",
+    "track": "frameworks",
+    "title": {
+      "es": "Persistencia: SQL, GORM, sqlc y Ent",
+      "en": "Persistence: SQL, GORM, sqlc and Ent",
+      "ja": "永続化：SQL、GORM、sqlc、Ent",
+      "zh": "持久化：SQL、GORM、sqlc 与 Ent",
+      "pt": "Persistência: SQL, GORM, sqlc e Ent",
+      "fr": "Persistance : SQL, GORM, sqlc et Ent"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "SQL",
+      "GORM",
+      "sqlc",
+      "Ent"
+    ]
+  },
+  {
+    "id": "F07",
+    "slug": "frameworks-07",
+    "track": "frameworks",
+    "title": {
+      "es": "gRPC y Protocol Buffers",
+      "en": "gRPC and Protocol Buffers",
+      "ja": "gRPCとProtocol Buffers",
+      "zh": "gRPC 与 Protocol Buffers",
+      "pt": "gRPC e Protocol Buffers",
+      "fr": "gRPC et Protocol Buffers"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "gRPC",
+      "Protobuf",
+      "streaming"
+    ]
+  },
+  {
+    "id": "F08",
+    "slug": "frameworks-08",
+    "track": "frameworks",
+    "title": {
+      "es": "Arquitectura y comparación",
+      "en": "Architecture and comparison",
+      "ja": "アーキテクチャと比較",
+      "zh": "架构与对比",
+      "pt": "Arquitetura e comparação",
+      "fr": "Architecture et comparaison"
+    },
+    "summary": {
+      "es": "Frameworks backend y herramientas del ecosistema Go.",
+      "en": "Backend frameworks and tools in the Go ecosystem.",
+      "ja": "Goエコシステムのバックエンドフレームワークとツール。",
+      "zh": "Go 生态中的后端框架与工具。",
+      "pt": "Frameworks backend e ferramentas do ecossistema Go.",
+      "fr": "Frameworks backend et outils de l’écosystème Go."
+    },
+    "status": "planned",
+    "tools": [
+      "API contracts",
+      "testing",
+      "performance"
+    ]
+  }
+]

@@ -1,0 +1,776 @@
+[
+  {
+    "moduleId": "S01",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Revisión de una librería heredada",
+    "brief": "Una biblioteca pública acumula interfaces con un único consumidor, métodos duplicados y errores que pierden contexto.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s01-step-1",
+        "prompt": "Una interfaz tiene 14 métodos pero el consumidor usa dos. ¿Qué cambio priorizas?",
+        "options": [
+          "Extraer una interfaz pequeña cerca del consumidor",
+          "Crear una interfaz global de 30 métodos",
+          "Reemplazar interfaces por variables globales"
+        ],
+        "correct": 0,
+        "explanation": "Reducir la superficie del contrato facilita pruebas y evita acoplamiento."
+      },
+      {
+        "id": "s01-step-2",
+        "prompt": "Se cambia un error de negocio que usa un consumidor externo. ¿Cómo procedes?",
+        "options": [
+          "Sustituirlo por panic",
+          "Devolver siempre nil",
+          "Conservar una identidad comprobable con errors.Is y documentar el cambio"
+        ],
+        "correct": 2,
+        "explanation": "Los consumidores necesitan distinguir errores esperados sin parsear cadenas."
+      },
+      {
+        "id": "s01-step-3",
+        "prompt": "La propuesta añade seis capas sin requisitos nuevos. ¿Qué decides?",
+        "options": [
+          "Introducir reflexión dinámica en todas partes",
+          "Exigir un caso de uso concreto y preferir composición simple",
+          "Aprobar porque más capas siempre es mejor"
+        ],
+        "correct": 1,
+        "explanation": "La abstracción debe responder a una necesidad verificable."
+      }
+    ]
+  },
+  {
+    "moduleId": "S02",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Separar módulos sin romper contratos",
+    "brief": "Un monolito de pedidos depende de importaciones cruzadas entre dominio, HTTP y acceso a datos.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s02-step-1",
+        "prompt": "Un tipo del dominio importa directamente un handler HTTP. ¿Qué cambias?",
+        "options": [
+          "Reemplazar imports con variables globales",
+          "Invertir la dependencia y definir un contrato cercano al dominio",
+          "Mover todos los archivos a una carpeta common"
+        ],
+        "correct": 1,
+        "explanation": "La lógica de negocio no debe depender del transporte."
+      },
+      {
+        "id": "s02-step-2",
+        "prompt": "Un equipo propone diez servicios antes de medir necesidades. ¿Qué eliges?",
+        "options": [
+          "Empezar con un monolito modular y límites explícitos",
+          "Separar cada struct en un servicio",
+          "Compartir una base sin contratos"
+        ],
+        "correct": 0,
+        "explanation": "La separación física prematura aumenta complejidad operacional."
+      },
+      {
+        "id": "s02-step-3",
+        "prompt": "Un ciclo de imports impide compilar. ¿Cómo lo resuelves?",
+        "options": [
+          "Usar init para esconder el ciclo",
+          "Copiar todos los paquetes",
+          "Extraer responsabilidades y un contrato mínimo sin dependencia circular"
+        ],
+        "correct": 2,
+        "explanation": "Los ciclos revelan límites de responsabilidad mal definidos."
+      }
+    ]
+  },
+  {
+    "moduleId": "S03",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "API de pagos resistente a reintentos",
+    "brief": "Los clientes repiten peticiones POST cuando la conexión se interrumpe antes de recibir respuesta.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s03-step-1",
+        "prompt": "La operación se pudo completar antes del timeout. ¿Qué habilitas?",
+        "options": [
+          "Repetir pagos sin identificador",
+          "Deshabilitar logs",
+          "Clave de idempotencia con almacenamiento de resultado"
+        ],
+        "correct": 2,
+        "explanation": "La idempotencia debe cubrir todo el efecto de negocio."
+      },
+      {
+        "id": "s03-step-2",
+        "prompt": "Un cliente antiguo necesita seguir funcionando. ¿Cómo evolucionas el contrato?",
+        "options": [
+          "Usar códigos HTTP siempre 200",
+          "Añadir campos compatibles y versionar cambios destructivos",
+          "Renombrar todos los campos sin aviso"
+        ],
+        "correct": 1,
+        "explanation": "Los cambios deben preservar garantías a consumidores existentes."
+      },
+      {
+        "id": "s03-step-3",
+        "prompt": "Una colección crece a millones de filas. ¿Qué paginación evalúas?",
+        "options": [
+          "Cursor estable con orden determinista",
+          "Descargar siempre toda la colección",
+          "Usar offset sin índices para cualquier escala"
+        ],
+        "correct": 0,
+        "explanation": "Los cursores favorecen recorridos estables en datos cambiantes."
+      }
+    ]
+  },
+  {
+    "moduleId": "S04",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Inventario con estados de negocio",
+    "brief": "Una reserva puede estar pendiente, confirmada, vencida o cancelada; el código mezcla transiciones inválidas.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s04-step-1",
+        "prompt": "Se intenta confirmar una reserva cancelada. ¿Qué diseño evita el error?",
+        "options": [
+          "Máquina de estados con transiciones explícitas",
+          "Permitir todos los cambios de estado",
+          "Guardar solo un boolean"
+        ],
+        "correct": 0,
+        "explanation": "Las invariantes deben estar centralizadas."
+      },
+      {
+        "id": "s04-step-2",
+        "prompt": "Llega un evento duplicado. ¿Qué hace el dominio?",
+        "options": [
+          "Descuenta de nuevo el inventario",
+          "Elimina el historial de eventos",
+          "Rechaza o ignora idempotentemente la transición repetida"
+        ],
+        "correct": 2,
+        "explanation": "La repetición de mensajes no debe duplicar efectos."
+      },
+      {
+        "id": "s04-step-3",
+        "prompt": "Un pedido posee reglas que un handler implementa en tres sitios. ¿Dónde van?",
+        "options": [
+          "En CSS del frontend",
+          "En un servicio o entidad de dominio con pruebas",
+          "En cada handler HTTP"
+        ],
+        "correct": 1,
+        "explanation": "Centralizar invariantes facilita consistencia y comprobación."
+      }
+    ]
+  },
+  {
+    "moduleId": "S05",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Workers atascados durante apagado",
+    "brief": "Un servicio procesa trabajos desde una cola; un consumidor queda bloqueado cuando el contexto se cancela.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s05-step-1",
+        "prompt": "Un envío puede bloquear aunque la cancelación esté activada. ¿Qué usas?",
+        "options": [
+          "Hacer time.Sleep indefinidamente",
+          "select entre envío y ctx.Done()",
+          "Enviar directamente a canal sin alternativa"
+        ],
+        "correct": 1,
+        "explanation": "El productor debe observar la cancelación mientras espera."
+      },
+      {
+        "id": "s05-step-2",
+        "prompt": "La cola recibe diez veces más trabajos de los que procesa. ¿Qué mecanismo aplica?",
+        "options": [
+          "Cola acotada y política explícita de backpressure",
+          "Canal ilimitado sin métricas",
+          "Crear goroutines infinitas"
+        ],
+        "correct": 0,
+        "explanation": "Los límites evitan acumulación y presión de memoria."
+      },
+      {
+        "id": "s05-step-3",
+        "prompt": "Un worker termina con error y otros siguen vivos. ¿Qué control agregas?",
+        "options": [
+          "panic en cada worker sin recuperación",
+          "Cerrar el canal desde cualquier consumidor",
+          "Propagación de errores y cierre coordinado"
+        ],
+        "correct": 2,
+        "explanation": "El dueño del ciclo de vida debe coordinar la terminación."
+      }
+    ]
+  },
+  {
+    "moduleId": "S06",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Contador atómico mal entendido",
+    "brief": "Un contador compartido se incrementa desde muchos productores y una operación compuesta falla ocasionalmente.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s06-step-1",
+        "prompt": "Dos pasos de lectura y escritura deben ser indivisibles. ¿Qué eliges?",
+        "options": [
+          "Dos Load separados sin sincronización",
+          "Un sleep entre pasos",
+          "Mutex alrededor de toda la operación lógica"
+        ],
+        "correct": 2,
+        "explanation": "Atomics aislados no hacen atómica una transacción compuesta."
+      },
+      {
+        "id": "s06-step-2",
+        "prompt": "Un valor se publica a otros hilos. ¿Qué importa verificar?",
+        "options": [
+          "La velocidad del procesador únicamente",
+          "Relaciones de sincronización happens-before",
+          "Orden aparente de líneas del archivo"
+        ],
+        "correct": 1,
+        "explanation": "La visibilidad de datos depende de sincronización correcta."
+      },
+      {
+        "id": "s06-step-3",
+        "prompt": "El race detector no informa nada pero un saldo queda negativo. ¿Qué concluyes?",
+        "options": [
+          "Puede existir una race condition lógica sin data race",
+          "El programa es necesariamente correcto",
+          "Eliminar todos los tests"
+        ],
+        "correct": 0,
+        "explanation": "La seguridad de memoria no implica invariantes de negocio."
+      }
+    ]
+  },
+  {
+    "moduleId": "S07",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Heap creciendo durante horas",
+    "brief": "Los perfiles muestran retención de buffers que deberían liberarse al finalizar una solicitud.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s07-step-1",
+        "prompt": "¿Qué observas antes de cambiar GC?",
+        "options": [
+          "Heap profiles y rutas de retención",
+          "Duplicar GOGC sin medir",
+          "Eliminar context.Context"
+        ],
+        "correct": 0,
+        "explanation": "Debes distinguir retención de asignaciones transitorias."
+      },
+      {
+        "id": "s07-step-2",
+        "prompt": "Una slice pequeña conserva un backing array enorme. ¿Qué haces?",
+        "options": [
+          "Mantener siempre la slice original",
+          "Desactivar garbage collection",
+          "Copiar los datos necesarios a un buffer pequeño"
+        ],
+        "correct": 2,
+        "explanation": "Una subslice puede retener el array completo."
+      },
+      {
+        "id": "s07-step-3",
+        "prompt": "La latencia sube después de una optimización. ¿Cómo evalúas?",
+        "options": [
+          "Comparar una sola ejecución",
+          "Repetir perfiles representativos y comparar distribuciones",
+          "Quedarse con el benchmark más favorable"
+        ],
+        "correct": 1,
+        "explanation": "La variabilidad exige medidas reproducibles."
+      }
+    ]
+  },
+  {
+    "moduleId": "S08",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Optimización con benchmarks engañosos",
+    "brief": "Un microbenchmark afirma 90 % de mejora, pero en producción el p99 empeoró.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s08-step-1",
+        "prompt": "¿Qué evidencia priorizas?",
+        "options": [
+          "La cantidad de líneas de código",
+          "Perfiles y métricas con carga representativa",
+          "Un tiempo de un solo bucle vacío"
+        ],
+        "correct": 1,
+        "explanation": "La mejora debe medirse en un escenario pertinente."
+      },
+      {
+        "id": "s08-step-2",
+        "prompt": "Los resultados varían demasiado. ¿Qué haces?",
+        "options": [
+          "Repetir benchmarks controlados y reportar dispersión",
+          "Descartar resultados malos",
+          "Aumentar exclusivamente la frecuencia CPU"
+        ],
+        "correct": 0,
+        "explanation": "La reproducibilidad importa tanto como la media."
+      },
+      {
+        "id": "s08-step-3",
+        "prompt": "Se optimiza asignación pero aumenta la contención. ¿Qué decides?",
+        "options": [
+          "Optimizar solo allocs/op",
+          "Eliminar timeouts",
+          "Comparar throughput, p95/p99 y perfiles de mutex"
+        ],
+        "correct": 2,
+        "explanation": "Las optimizaciones tienen efectos cruzados."
+      }
+    ]
+  },
+  {
+    "moduleId": "S09",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Mensajes duplicados en entrega distribuida",
+    "brief": "Un consumidor recibe dos veces el mismo evento durante una reconexión.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s09-step-1",
+        "prompt": "¿Qué garantía de procesamiento necesitas?",
+        "options": [
+          "Asumir entrega exactamente una vez en todo sistema",
+          "Ignorar duplicados sin guardar estado",
+          "Idempotencia de efectos con identificador de evento"
+        ],
+        "correct": 2,
+        "explanation": "La entrega at-least-once requiere control de duplicados."
+      },
+      {
+        "id": "s09-step-2",
+        "prompt": "Una partición de red impide contactar un servicio. ¿Qué defines?",
+        "options": [
+          "Contestar datos inventados",
+          "Política explícita de consistencia y disponibilidad",
+          "Bucle de reintentos sin límite"
+        ],
+        "correct": 1,
+        "explanation": "Los fallos parciales requieren decisiones de negocio."
+      },
+      {
+        "id": "s09-step-3",
+        "prompt": "Un mensaje se pierde antes del ACK. ¿Qué patrón estudias?",
+        "options": [
+          "Outbox transaccional y reintentos seguros",
+          "Escribir evento fuera de transacción sin garantía",
+          "Desactivar persistencia"
+        ],
+        "correct": 0,
+        "explanation": "El outbox ayuda a cerrar la brecha entre transacción y publicación."
+      }
+    ]
+  },
+  {
+    "moduleId": "S10",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Dos compradores y una sola unidad",
+    "brief": "Dos transacciones leen stock=1 y ambas intentan finalizar una compra.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s10-step-1",
+        "prompt": "¿Cómo evitas stock negativo?",
+        "options": [
+          "Actualización condicional o bloqueo dentro de transacción",
+          "Validar en frontend únicamente",
+          "Esperar 100 ms antes de escribir"
+        ],
+        "correct": 0,
+        "explanation": "La operación crítica debe ser atómica en la base de datos."
+      },
+      {
+        "id": "s10-step-2",
+        "prompt": "Aparece un deadlock SQL bajo carga. ¿Qué estrategia usas?",
+        "options": [
+          "Ignorar la excepción y responder 200",
+          "Mantener locks sin timeout",
+          "Orden consistente de locks y retry acotado de transacciones"
+        ],
+        "correct": 2,
+        "explanation": "Ordenar bloqueos reduce ciclos y el retry debe ser seguro."
+      },
+      {
+        "id": "s10-step-3",
+        "prompt": "La caché devuelve datos antiguos después de confirmar una compra. ¿Qué defines?",
+        "options": [
+          "Leer siempre desde la caché y no observar base",
+          "Política de invalidación y consistencia",
+          "TTL infinito sin invalidación"
+        ],
+        "correct": 1,
+        "explanation": "El usuario debe conocer las garantías de frescura."
+      }
+    ]
+  },
+  {
+    "moduleId": "S11",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Cascada de errores por reintentos",
+    "brief": "Una dependencia degrada rendimiento y los reintentos triplican su carga.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s11-step-1",
+        "prompt": "¿Qué cambia en los reintentos?",
+        "options": [
+          "Crear más peticiones paralelas para cada fallo",
+          "Backoff con jitter, límite y presupuesto de tiempo",
+          "Reintento sin límite ni espera"
+        ],
+        "correct": 1,
+        "explanation": "Los reintentos deben evitar tormentas de carga."
+      },
+      {
+        "id": "s11-step-2",
+        "prompt": "Una dependencia deja de responder. ¿Qué protección sirve?",
+        "options": [
+          "Timeout, circuit breaker y degradación controlada",
+          "Bloquear todos los threads por siempre",
+          "Reintentar sin observabilidad"
+        ],
+        "correct": 0,
+        "explanation": "Los sistemas robustos contienen el impacto."
+      },
+      {
+        "id": "s11-step-3",
+        "prompt": "Hay cola saturada. ¿Qué política consideras?",
+        "options": [
+          "Aceptar todo sin límite",
+          "Omitir métricas de presión",
+          "Rechazo explícito y load shedding"
+        ],
+        "correct": 2,
+        "explanation": "Limitar trabajo entrante evita la caída del sistema."
+      }
+    ]
+  },
+  {
+    "moduleId": "S12",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Auditoría de un endpoint interno",
+    "brief": "Un servicio acepta URLs proporcionadas por usuarios y consulta recursos de red.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s12-step-1",
+        "prompt": "¿Qué amenaza relevante ves?",
+        "options": [
+          "Solo errores de formato CSS",
+          "Ningún riesgo al usar HTTP",
+          "SSRF y acceso a direcciones internas"
+        ],
+        "correct": 2,
+        "explanation": "La entrada de URLs requiere controles de destinos y red."
+      },
+      {
+        "id": "s12-step-2",
+        "prompt": "Un handler construye SQL concatenando datos. ¿Qué corriges?",
+        "options": [
+          "Confiar en clientes autenticados",
+          "Consultas parametrizadas",
+          "Escapar únicamente espacios"
+        ],
+        "correct": 1,
+        "explanation": "Las consultas parametrizadas separan código y datos."
+      },
+      {
+        "id": "s12-step-3",
+        "prompt": "Un token se registra en logs de producción. ¿Qué haces?",
+        "options": [
+          "Redactar secretos y rotar credenciales expuestas",
+          "Aumentar retención de logs",
+          "Compartir el token en el issue"
+        ],
+        "correct": 0,
+        "explanation": "Los secretos no deben persistir en telemetría."
+      }
+    ]
+  },
+  {
+    "moduleId": "S13",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Suite de tests intermitentes",
+    "brief": "Una prueba falla según el orden de ejecución y depende de la hora real.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s13-step-1",
+        "prompt": "¿Qué mejora haces primero?",
+        "options": [
+          "Inyectar reloj y aislar estado entre casos",
+          "Añadir sleep fijo",
+          "Desactivar la prueba"
+        ],
+        "correct": 0,
+        "explanation": "Los tests deterministas controlan tiempo y dependencias."
+      },
+      {
+        "id": "s13-step-2",
+        "prompt": "Un test paralelo usa un map compartido. ¿Qué revisas?",
+        "options": [
+          "Solo el nombre del test",
+          "Menos comentarios",
+          "Acceso concurrente y race detector"
+        ],
+        "correct": 2,
+        "explanation": "El paralelismo puede exponer data races."
+      },
+      {
+        "id": "s13-step-3",
+        "prompt": "Aparece un bug con entrada inesperada. ¿Qué agregas?",
+        "options": [
+          "Eliminar validación",
+          "Fuzz testing con invariantes bien definidas",
+          "Prueba únicamente el caso feliz"
+        ],
+        "correct": 1,
+        "explanation": "El fuzzing explora entradas que no anticipamos."
+      }
+    ]
+  },
+  {
+    "moduleId": "S14",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Latencia p99 sube sin cambios aparentes",
+    "brief": "La media permanece estable pero una minoría de requests se vuelve muy lenta.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s14-step-1",
+        "prompt": "¿Qué señales necesitas?",
+        "options": [
+          "Eliminar histogramas",
+          "Trazas correlacionadas y métricas de latencia por percentil",
+          "Solo contador global total"
+        ],
+        "correct": 1,
+        "explanation": "La cola de latencia no se explica con promedios."
+      },
+      {
+        "id": "s14-step-2",
+        "prompt": "Un label contiene IDs de usuario. ¿Qué riesgo hay?",
+        "options": [
+          "Cardinalidad excesiva y posible exposición de datos",
+          "Mejor compresión automáticamente",
+          "Ningún impacto"
+        ],
+        "correct": 0,
+        "explanation": "Las etiquetas de alta cardinalidad degradan métricas."
+      },
+      {
+        "id": "s14-step-3",
+        "prompt": "Hay incidente activo. ¿Qué comunica el responsable?",
+        "options": [
+          "Conclusión definitiva antes de investigar",
+          "Solo stacktrace sin contexto",
+          "Impacto, mitigación, actualización y responsables"
+        ],
+        "correct": 2,
+        "explanation": "El proceso de incidentes debe ser claro y trazable."
+      }
+    ]
+  },
+  {
+    "moduleId": "S15",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Despliegue interrumpe trabajos en curso",
+    "brief": "Un pod termina inmediatamente y corta peticiones HTTP y jobs activos.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s15-step-1",
+        "prompt": "¿Qué implementas?",
+        "options": [
+          "Forzar exit(1) inmediato",
+          "Desactivar readiness forever",
+          "Graceful shutdown con señal, deadline y drenado"
+        ],
+        "correct": 2,
+        "explanation": "Las conexiones deben drenar dentro de un presupuesto."
+      },
+      {
+        "id": "s15-step-2",
+        "prompt": "El despliegue aumenta errores. ¿Qué estrategia necesitas?",
+        "options": [
+          "Ignorar alertas durante 24 horas",
+          "Canary y rollback basado en métricas",
+          "Deploy simultáneo sin observación"
+        ],
+        "correct": 1,
+        "explanation": "Las releases requieren reversibilidad verificable."
+      },
+      {
+        "id": "s15-step-3",
+        "prompt": "La imagen contiene dependencias vulnerables. ¿Qué control usas?",
+        "options": [
+          "Escaneo, pinning y actualización reproducible",
+          "Desactivar auditoría",
+          "Publicar secretos de CI"
+        ],
+        "correct": 0,
+        "explanation": "La cadena de suministro debe revisarse continuamente."
+      }
+    ]
+  },
+  {
+    "moduleId": "S16",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Migración de API pública legado",
+    "brief": "Una librería antigua necesita modernización pero cientos de consumidores dependen de ella.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s16-step-1",
+        "prompt": "¿Qué cambio reduces riesgo?",
+        "options": [
+          "Adaptador compatible y migración incremental",
+          "Borrar API pública en una sola release",
+          "Copiar y mantener dos bases sin test"
+        ],
+        "correct": 0,
+        "explanation": "La evolución incremental permite validar contratos."
+      },
+      {
+        "id": "s16-step-2",
+        "prompt": "Una migración de base toma horas. ¿Qué técnica evalúas?",
+        "options": [
+          "Eliminar columnas usadas de inmediato",
+          "Bloquear escritores sin plan",
+          "Expand-and-contract con cambios compatibles"
+        ],
+        "correct": 2,
+        "explanation": "Las migraciones graduales evitan paradas."
+      },
+      {
+        "id": "s16-step-3",
+        "prompt": "¿Cómo demuestras compatibilidad?",
+        "options": [
+          "Preguntar a un único cliente",
+          "Contract tests y pruebas de migración",
+          "Revisar solo el README"
+        ],
+        "correct": 1,
+        "explanation": "La compatibilidad requiere evidencia automática."
+      }
+    ]
+  },
+  {
+    "moduleId": "S17",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Revisión de propuesta técnica",
+    "brief": "Se propone adoptar cinco servicios para resolver una necesidad todavía pequeña.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s17-step-1",
+        "prompt": "¿Qué pide un revisor senior?",
+        "options": [
+          "Aprobar sin requisitos",
+          "ADR con alternativas, costos y riesgos",
+          "Elegir la opción con más componentes"
+        ],
+        "correct": 1,
+        "explanation": "Las decisiones deben apoyarse en restricciones reales."
+      },
+      {
+        "id": "s17-step-2",
+        "prompt": "Una PR corrige un bug pero no añade pruebas. ¿Qué haces?",
+        "options": [
+          "Solicitar test de regresión y explicar el riesgo",
+          "Rechazar sin explicación",
+          "Aprobar porque el código parece bien"
+        ],
+        "correct": 0,
+        "explanation": "La revisión protege futuros cambios."
+      },
+      {
+        "id": "s17-step-3",
+        "prompt": "Un equipo tiene un incidente repetido. ¿Qué práctica promueves?",
+        "options": [
+          "Buscar culpables en público",
+          "Eliminar alertas",
+          "Postmortem sin culpas y acciones verificables"
+        ],
+        "correct": 2,
+        "explanation": "El aprendizaje sistémico mejora fiabilidad."
+      }
+    ]
+  },
+  {
+    "moduleId": "S18",
+    "challengeId": "investigation-lab",
+    "version": 1,
+    "title": "Defensa de una arquitectura distribuida",
+    "brief": "Diseñas un procesamiento de pedidos con picos de carga, pagos idempotentes y observabilidad.",
+    "mode": "offline-reasoning",
+    "steps": [
+      {
+        "id": "s18-step-1",
+        "prompt": "¿Cuál es la primera entrega?",
+        "options": [
+          "Diagrama de diez microservicios",
+          "Elegir framework por popularidad",
+          "Requisitos, capacidad estimada y SLO medibles"
+        ],
+        "correct": 2,
+        "explanation": "Una arquitectura debe resolver requisitos claros."
+      },
+      {
+        "id": "s18-step-2",
+        "prompt": "Un componente falla a mitad de una saga. ¿Qué prevés?",
+        "options": [
+          "Duplicar pagos",
+          "Compensación e idempotencia de pasos",
+          "Asumir transacción ACID entre todos los servicios"
+        ],
+        "correct": 1,
+        "explanation": "Los flujos distribuidos requieren recuperación."
+      },
+      {
+        "id": "s18-step-3",
+        "prompt": "¿Qué exige la defensa final?",
+        "options": [
+          "Trade-offs, pruebas de carga, riesgos y plan gradual",
+          "Solo dibujo visual sin medidas",
+          "Afirmar que nunca habrá fallos"
+        ],
+        "correct": 0,
+        "explanation": "Las decisiones deben ser medibles y revisables."
+      }
+    ]
+  }
+]

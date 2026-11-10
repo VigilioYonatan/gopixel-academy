@@ -1,0 +1,848 @@
+[
+  {
+    "moduleId": "S01",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Dónde definirías una interfaz que usa un servicio?",
+        "options": [
+          "En un paquete interfaces global",
+          "Una interfaz por struct",
+          "En el paquete consumidor"
+        ],
+        "correct": 2,
+        "explanation": "Una interfaz pequeña en el consumidor reduce el acoplamiento y facilita probar el comportamiento."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "Evita capas de abstracción sin casos de uso concretos.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "Evita capas de abstracción sin casos de uso concretos."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Haz refactor con tests de comportamiento para proteger la API pública."
+      }
+    ],
+    "learningPoints": [
+      "Una interfaz pequeña en el consumidor reduce el acoplamiento y facilita probar el comportamiento.",
+      "Evita capas de abstracción sin casos de uso concretos.",
+      "Haz refactor con tests de comportamiento para proteger la API pública."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S02",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué capa debe conocer los detalles del repositorio SQL?",
+        "options": [
+          "Adaptador de infraestructura",
+          "Dominio",
+          "Entidad de dominio"
+        ],
+        "correct": 0,
+        "explanation": "La infraestructura implementa el contrato de persistencia, no el dominio."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "Los ciclos de importación indican fronteras mal definidas."
+        ],
+        "correct": 2,
+        "explanation": "Los ciclos de importación indican fronteras mal definidas."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "Un monolito modular suele ser el punto de partida más simple."
+      }
+    ],
+    "learningPoints": [
+      "La infraestructura implementa el contrato de persistencia, no el dominio.",
+      "Los ciclos de importación indican fronteras mal definidas.",
+      "Un monolito modular suele ser el punto de partida más simple."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S03",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo se evita duplicar un pago ante reintentos?",
+        "options": [
+          "Aumentar timeout indefinidamente",
+          "Clave de idempotencia persistida",
+          "Reintentos inmediatos sin estado"
+        ],
+        "correct": 1,
+        "explanation": "La idempotencia necesita un registro duradero ligado a la operación y su resultado."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Los contratos deben definir errores y códigos coherentes.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "Los contratos deben definir errores y códigos coherentes."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Hay que documentar qué campos rompen la compatibilidad."
+      }
+    ],
+    "learningPoints": [
+      "La idempotencia necesita un registro duradero ligado a la operación y su resultado.",
+      "Los contratos deben definir errores y códigos coherentes.",
+      "Hay que documentar qué campos rompen la compatibilidad."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S04",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Dónde debería comprobarse el stock antes de confirmarse una compra?",
+        "options": [
+          "Solo en frontend",
+          "En una variable global sin lock",
+          "Dentro de una operación atómica del dominio/persistencia"
+        ],
+        "correct": 2,
+        "explanation": "Las invariantes se verifican en el límite de consistencia."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "Un agregado debe definir transiciones válidas.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "Un agregado debe definir transiciones válidas."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Una máquina de estados evita transiciones imposibles."
+      }
+    ],
+    "learningPoints": [
+      "Las invariantes se verifican en el límite de consistencia.",
+      "Un agregado debe definir transiciones válidas.",
+      "Una máquina de estados evita transiciones imposibles."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S05",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué mecanismo permite detener tareas y propagar cancelación?",
+        "options": [
+          "context.Context y cierre coordinado",
+          "time.Sleep fijo",
+          "Crear goroutines ilimitadas"
+        ],
+        "correct": 0,
+        "explanation": "Propaga context.Context y espera explícitamente a los trabajadores activos."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "La cola acotada requiere política cuando se llena."
+        ],
+        "correct": 2,
+        "explanation": "La cola acotada requiere política cuando se llena."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "Cerrar canales necesita un propietario claro."
+      }
+    ],
+    "learningPoints": [
+      "Propaga context.Context y espera explícitamente a los trabajadores activos.",
+      "La cola acotada requiere política cuando se llena.",
+      "Cerrar canales necesita un propietario claro."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S06",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué garantiza la ausencia de data race en una actualización compartida?",
+        "options": [
+          "Dormir 1 ms",
+          "Sincronización apropiada o acceso atómico correcto",
+          "Que el programa compile"
+        ],
+        "correct": 1,
+        "explanation": "El modelo de memoria define las relaciones happens-before."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Una operación lógica puede requerir más de una operación atómica.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "Una operación lógica puede requerir más de una operación atómica."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Evitar data races no garantiza invariantes de negocio."
+      }
+    ],
+    "learningPoints": [
+      "El modelo de memoria define las relaciones happens-before.",
+      "Una operación lógica puede requerir más de una operación atómica.",
+      "Evitar data races no garantiza invariantes de negocio."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S07",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué investigas primero ante aumento sostenido de heap?",
+        "options": [
+          "Reiniciar cada segundo",
+          "Aumentar memoria sin medir",
+          "Perfiles de heap y retención de objetos"
+        ],
+        "correct": 2,
+        "explanation": "Distingue asignaciones temporales de objetos retenidos."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "La escape analysis ayuda a entender asignaciones.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "La escape analysis ayuda a entender asignaciones."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Un recurso no cerrado puede retener memoria aunque no haya data races."
+      }
+    ],
+    "learningPoints": [
+      "Distingue asignaciones temporales de objetos retenidos.",
+      "La escape analysis ayuda a entender asignaciones.",
+      "Un recurso no cerrado puede retener memoria aunque no haya data races."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S08",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué medida representa mejor la latencia de la cola de peticiones?",
+        "options": [
+          "Percentiles como p95/p99",
+          "Solo promedio",
+          "Solo tamaño binario"
+        ],
+        "correct": 0,
+        "explanation": "Compara distribuciones y condiciones reproducibles."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "Perfil antes de optimizar."
+        ],
+        "correct": 2,
+        "explanation": "Perfil antes de optimizar."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "No compares benchmarks de entornos distintos como equivalentes."
+      }
+    ],
+    "learningPoints": [
+      "Compara distribuciones y condiciones reproducibles.",
+      "Perfil antes de optimizar.",
+      "No compares benchmarks de entornos distintos como equivalentes."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S09",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo debe diseñarse un consumidor at-least-once?",
+        "options": [
+          "Rechazar todos los retries",
+          "Idempotente frente a entregas duplicadas",
+          "Suponer un solo mensaje"
+        ],
+        "correct": 1,
+        "explanation": "At-least-once permite duplicados."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Las particiones pueden romper el orden global.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "Las particiones pueden romper el orden global."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Usa claves de deduplicación o operaciones idempotentes."
+      }
+    ],
+    "learningPoints": [
+      "At-least-once permite duplicados.",
+      "Las particiones pueden romper el orden global.",
+      "Usa claves de deduplicación o operaciones idempotentes."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S10",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo evitar dos ventas concurrentes de una última unidad?",
+        "options": [
+          "Lectura previa sin transacción",
+          "Contador local en cliente",
+          "Transacción con condición/lock y verificación"
+        ],
+        "correct": 2,
+        "explanation": "Las transacciones deben proteger la invariante de stock."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "Revisa niveles de aislamiento y anomalías.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "Revisa niveles de aislamiento y anomalías."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Diseña migraciones compatibles en varias versiones."
+      }
+    ],
+    "learningPoints": [
+      "Las transacciones deben proteger la invariante de stock.",
+      "Revisa niveles de aislamiento y anomalías.",
+      "Diseña migraciones compatibles en varias versiones."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S11",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo evitar una tormenta de reintentos durante una falla?",
+        "options": [
+          "Backoff exponencial con jitter y límites",
+          "Retry infinito inmediato",
+          "Eliminar timeout"
+        ],
+        "correct": 0,
+        "explanation": "Los retries consumen recursos del servicio ya saturado."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "Los timeouts deben caber en un presupuesto extremo a extremo."
+        ],
+        "correct": 2,
+        "explanation": "Los timeouts deben caber en un presupuesto extremo a extremo."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "Un circuit breaker es útil si su política de recuperación está definida."
+      }
+    ],
+    "learningPoints": [
+      "Los retries consumen recursos del servicio ya saturado.",
+      "Los timeouts deben caber en un presupuesto extremo a extremo.",
+      "Un circuit breaker es útil si su política de recuperación está definida."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S12",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué defensa evita inyección SQL en consultas con datos externos?",
+        "options": [
+          "Validar solo en frontend",
+          "Parámetros enlazados",
+          "Concatenar strings con comillas"
+        ],
+        "correct": 1,
+        "explanation": "Utiliza placeholders y parámetros de driver."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Revisa autorizaciones por objeto, no solo autenticación.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "Revisa autorizaciones por objeto, no solo autenticación."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Los secretos nunca deben incorporarse al bundle web."
+      }
+    ],
+    "learningPoints": [
+      "Utiliza placeholders y parámetros de driver.",
+      "Revisa autorizaciones por objeto, no solo autenticación.",
+      "Los secretos nunca deben incorporarse al bundle web."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S13",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo detectas accesos concurrentes inseguros en Go nativo?",
+        "options": [
+          "go fmt",
+          "grep TODO",
+          "go test -race"
+        ],
+        "correct": 2,
+        "explanation": "El race detector detecta carreras ejecutadas durante la prueba."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "El fuzzing explora entradas nuevas y casos límite.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "El fuzzing explora entradas nuevas y casos límite."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Los tests inestables no deben apagarse para publicar."
+      }
+    ],
+    "learningPoints": [
+      "El race detector detecta carreras ejecutadas durante la prueba.",
+      "El fuzzing explora entradas nuevas y casos límite.",
+      "Los tests inestables no deben apagarse para publicar."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S14",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué dato necesitas para localizar una latencia p99 anómala?",
+        "options": [
+          "Trazas y métricas correlacionadas",
+          "Solo promedio diario",
+          "Número de commits"
+        ],
+        "correct": 0,
+        "explanation": "Correlaciona trazas, logs y métricas con identificadores de contexto."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "Evita cardinalidad explosiva en etiquetas."
+        ],
+        "correct": 2,
+        "explanation": "Evita cardinalidad explosiva en etiquetas."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "Diseña alertas a partir de objetivos de servicio."
+      }
+    ],
+    "learningPoints": [
+      "Correlaciona trazas, logs y métricas con identificadores de contexto.",
+      "Evita cardinalidad explosiva en etiquetas.",
+      "Diseña alertas a partir de objetivos de servicio."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S15",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo despliegas sin cortar solicitudes activas?",
+        "options": [
+          "Borrar todos los pods",
+          "Readiness y shutdown coordinado",
+          "Matar proceso inmediatamente"
+        ],
+        "correct": 1,
+        "explanation": "La readiness impide dirigir tráfico a instancias no preparadas."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "El shutdown debe drenar solicitudes dentro de un plazo.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "El shutdown debe drenar solicitudes dentro de un plazo."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Necesitas estrategia de rollback probada."
+      }
+    ],
+    "learningPoints": [
+      "La readiness impide dirigir tráfico a instancias no preparadas.",
+      "El shutdown debe drenar solicitudes dentro de un plazo.",
+      "Necesitas estrategia de rollback probada."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S16",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Cómo migras una API sin romper consumidores existentes?",
+        "options": [
+          "Cambiar todo simultáneamente",
+          "Eliminar API anterior sin aviso",
+          "Cambios incrementales compatibles y pruebas de contrato"
+        ],
+        "correct": 2,
+        "explanation": "Planifica ventanas de coexistencia y compatibilidad."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Asumir que todo fallo es imposible",
+          "Las migraciones expand-contract reducen riesgo.",
+          "Ignorar pruebas y desplegar"
+        ],
+        "correct": 1,
+        "explanation": "Las migraciones expand-contract reducen riesgo."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas"
+        ],
+        "correct": 0,
+        "explanation": "Documenta rollback y datos afectados."
+      }
+    ],
+    "learningPoints": [
+      "Planifica ventanas de coexistencia y compatibilidad.",
+      "Las migraciones expand-contract reducen riesgo.",
+      "Documenta rollback y datos afectados."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S17",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué debe registrar un Architecture Decision Record?",
+        "options": [
+          "Contexto, opciones, decisión y consecuencias",
+          "Solo el nombre del autor",
+          "Solo un diagrama"
+        ],
+        "correct": 0,
+        "explanation": "Los ADR preservan el porqué, no solo el qué."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible",
+          "Evalúa el costo del mantenimiento futuro."
+        ],
+        "correct": 2,
+        "explanation": "Evalúa el costo del mantenimiento futuro."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño",
+          "Dar por correcto solo porque compila"
+        ],
+        "correct": 1,
+        "explanation": "La revisión técnica debe señalar riesgos concretos y alternativas."
+      }
+    ],
+    "learningPoints": [
+      "Los ADR preservan el porqué, no solo el qué.",
+      "Evalúa el costo del mantenimiento futuro.",
+      "La revisión técnica debe señalar riesgos concretos y alternativas."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  },
+  {
+    "moduleId": "S18",
+    "challengeId": "decision-lab",
+    "version": 1,
+    "questions": [
+      {
+        "id": "decision",
+        "prompt": "¿Qué paso va primero en un diseño de sistema senior?",
+        "options": [
+          "Dibujar 100 microservicios",
+          "Requisitos, restricciones y objetivos de calidad",
+          "Elegir Kafka de inmediato"
+        ],
+        "correct": 1,
+        "explanation": "Aclara restricciones y requisitos no funcionales primero."
+      },
+      {
+        "id": "risk",
+        "prompt": "¿Cuál es el riesgo más importante que debemos considerar en este escenario?",
+        "options": [
+          "Explica trade-offs y modos de fallo.",
+          "Ignorar pruebas y desplegar",
+          "Asumir que todo fallo es imposible"
+        ],
+        "correct": 0,
+        "explanation": "Explica trade-offs y modos de fallo."
+      },
+      {
+        "id": "validation",
+        "prompt": "¿Qué enfoque de validación y operación elegirías?",
+        "options": [
+          "Dar por correcto solo porque compila",
+          "Evaluar únicamente el número de líneas",
+          "Comprobar comportamiento y documentar límites del diseño"
+        ],
+        "correct": 2,
+        "explanation": "Diseña etapas incrementales y prueba supuestos."
+      }
+    ],
+    "learningPoints": [
+      "Aclara restricciones y requisitos no funcionales primero.",
+      "Explica trade-offs y modos de fallo.",
+      "Diseña etapas incrementales y prueba supuestos."
+    ],
+    "type": "decision-quiz",
+    "verification": "objective-quiz-only"
+  }
+]

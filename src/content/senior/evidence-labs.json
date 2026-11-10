@@ -1,0 +1,344 @@
+[
+  {
+    "moduleId": "S01",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "review",
+    "title": "Una interfaz global gigante acopla handlers a una implementación",
+    "evidence": "type Repository interface { Save(); Find(); Delete(); Audit(); SendEmail() }",
+    "findings": [
+      "Una interfaz pequeña en el consumidor reduce acoplamiento",
+      "La interfaz debe obligatoriamente estar en un paquete global",
+      "Pruebas de comportamiento protegen la refactorización",
+      "Añadir métodos vacíos es una buena práctica"
+    ],
+    "correctFindings": [
+      0,
+      2
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S02",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "Servicio de pedidos depende directamente de HTTP y SQL",
+    "evidence": "handler -> postgres driver -> business rules",
+    "findings": [
+      "Mover reglas de negocio a un paquete que no importe HTTP",
+      "Introducir contratos pequeños para los adaptadores",
+      "Crear 14 capas sin necesidad",
+      "Ejecutar SQL directamente desde cada endpoint"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S03",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "El cliente reintenta una solicitud de cobro tras un timeout",
+    "evidence": "POST /payments 504; retry POST /payments 201",
+    "findings": [
+      "Utilizar una clave de idempotencia estable por operación",
+      "Consultar el estado antes de repetir si el contrato lo requiere",
+      "Reintentar sin límite hasta recibir 200",
+      "Cambiar todos los POST por GET"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S04",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "Dos comandos permiten llevar el inventario a valores negativos",
+    "evidence": "stock=1; Reserve(1); Reserve(1)",
+    "findings": [
+      "Expresar stock no negativo como invariante del dominio",
+      "Hacer comprobación y mutación atómicas en el límite adecuado",
+      "Confiar solo en validación de la interfaz gráfica",
+      "Permitir stock negativo y limpiar a medianoche"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S05",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "concurrency",
+    "title": "Un productor sigue escribiendo después de cancelar el consumidor",
+    "evidence": "for job := range input { output <- process(job) }",
+    "findings": [
+      "Propagar ctx.Done() a productores y consumidores",
+      "Definir quién cierra cada canal y cómo termina la ejecución",
+      "Iniciar goroutines ilimitadas para evitar bloqueos",
+      "Ignorar errores de operaciones canceladas"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S06",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "concurrency",
+    "title": "Un contador se actualiza desde varias goroutines sin sincronización",
+    "evidence": "counter++ // from multiple goroutines",
+    "findings": [
+      "Aplicar mutex o atomic adecuado para el contrato",
+      "Probar con el race detector en un entorno Go real",
+      "Usar sleep para garantizar el orden",
+      "Suponer que int++ es una operación indivisible"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S07",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "performance",
+    "title": "La memoria aumenta continuamente con peticiones repetidas",
+    "evidence": "heap_inuse: 48MB -> 104MB -> 278MB",
+    "findings": [
+      "Comparar perfiles de heap retenido entre intervalos",
+      "Revisar referencias globales, buffers y goroutines retenidas",
+      "Forzar runtime.GC() en cada petición como solución final",
+      "Suponer que toda subida de heap significa fuga"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S08",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "performance",
+    "title": "El p99 empeora mientras el throughput parece estable",
+    "evidence": "p50=20ms, p99=1700ms, mutex_wait=55%",
+    "findings": [
+      "Inspeccionar perfiles de mutex/bloqueo y p99",
+      "Medir antes y después con carga comparable",
+      "Optimizar sin medir basándose en intuición",
+      "Usar solo latencia promedio como criterio"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S09",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "Un consumidor recibe de nuevo un mensaje tras un fallo de ACK",
+    "evidence": "job-42 delivered twice; ack timeout",
+    "findings": [
+      "Hacer idempotente el efecto del consumidor",
+      "Persistir la deduplicación donde corresponda",
+      "Suponer entrega exactly-once de extremo a extremo",
+      "Eliminar todos los reintentos sin análisis"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S10",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "Dos compradores compiten por la última unidad",
+    "evidence": "tx A reads stock=1; tx B reads stock=1",
+    "findings": [
+      "Aplicar control de concurrencia transaccional apropiado",
+      "Comprobar invariantes en la misma transacción",
+      "Confiar en el carrito frontend como exclusión",
+      "Dormir 100 ms entre operaciones"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S11",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "Los reintentos multiplican el tráfico cuando un proveedor falla",
+    "evidence": "dependency 503; retries/s 100 -> 1300",
+    "findings": [
+      "Aplicar backoff con jitter y límites",
+      "Establecer presupuesto de timeouts y políticas de rechazo",
+      "Reintentar en un bucle infinito",
+      "Deshabilitar la observabilidad bajo carga"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S12",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "security",
+    "title": "Un endpoint descarga URLs suministradas por usuarios",
+    "evidence": "GET /fetch?url=http://169.254.169.254/",
+    "findings": [
+      "Bloquear destinos privados y metadatos de nube en el servidor",
+      "Aplicar allowlist y defensas contra SSRF y redirecciones",
+      "Aceptar cualquier esquema porque el navegador filtra",
+      "Ocultar la URL en CSS como mitigación"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S13",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "review",
+    "title": "Un test de concurrencia falla aleatoriamente",
+    "evidence": "time.Sleep(10*time.Millisecond); assert(done)",
+    "findings": [
+      "Sustituir sleeps frágiles por sincronización verificable",
+      "Comprobar cancelación y finalización con pruebas repetidas",
+      "Aumentar el sleep hasta que deje de fallar",
+      "Eliminar el test por ser intermitente"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S14",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "El p99 de la API subió después de una versión",
+    "evidence": "trace db_wait=1.4s; db_pool_wait=900ms",
+    "findings": [
+      "Correlacionar traces, saturación del pool y despliegue",
+      "Investigar queries y límites de conexiones",
+      "Aumentar los timeouts sin mirar el pool",
+      "Concluir por la media de latencia"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S15",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "incident",
+    "title": "Los pods terminan con peticiones activas",
+    "evidence": "SIGTERM -> exit immediately; 502 spike",
+    "findings": [
+      "Dejar de aceptar trabajo nuevo y drenar operaciones activas",
+      "Alinear readiness, grace period y shutdown",
+      "Matar inmediatamente todas las conexiones",
+      "Deshabilitar readiness para evitar 502"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S16",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "Hay que sustituir una librería sin romper a consumidores",
+    "evidence": "public API v1 used by 40 clients",
+    "findings": [
+      "Mantener contratos compatibles durante migración incremental",
+      "Cubrir comportamiento con contract tests",
+      "Cambiar firmas públicas de golpe sin versionar",
+      "Reemplazar todo el sistema en un único despliegue"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S17",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "review",
+    "title": "Una propuesta propone microservicios para una aplicación pequeña",
+    "evidence": "team=3; deployment=1; low independent scaling",
+    "findings": [
+      "Documentar alternativas y trade-offs mediante ADR",
+      "Evaluar primero un monolito modular",
+      "Elegir microservicios porque siempre son más modernos",
+      "Omitir costos operativos del análisis"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  },
+  {
+    "moduleId": "S18",
+    "challengeId": "evidence-lab",
+    "version": 1,
+    "kind": "architecture",
+    "title": "Diseñar una cola de trabajos ante fallos parciales",
+    "evidence": "5k jobs/min; retries; 99.9% SLA target",
+    "findings": [
+      "Definir contratos, carga estimada e invariantes",
+      "Diseñar idempotencia, observabilidad y recuperación",
+      "Asumir que la red nunca falla",
+      "Prometer latencia cero y consistencia total sin coste"
+    ],
+    "correctFindings": [
+      0,
+      1
+    ],
+    "explanation": "Las selecciones correctas requieren mitigaciones concretas, verificación objetiva y análisis de trade-offs. Una selección errónea no satisface el criterio."
+  }
+]

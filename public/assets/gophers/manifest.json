@@ -1,0 +1,74 @@
+[
+  {
+    "name": "welcome",
+    "file": "gophers/welcome.png",
+    "thumb": "gophers/welcome-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "reading",
+    "file": "gophers/reading.png",
+    "thumb": "gophers/reading-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "coding",
+    "file": "gophers/coding.png",
+    "thumb": "gophers/coding-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "question",
+    "file": "gophers/question.png",
+    "thumb": "gophers/question-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "celebrate",
+    "file": "gophers/celebrate.png",
+    "thumb": "gophers/celebrate-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "debug",
+    "file": "gophers/debug.png",
+    "thumb": "gophers/debug-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "building",
+    "file": "gophers/building.png",
+    "thumb": "gophers/building-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "senior",
+    "file": "gophers/senior.png",
+    "thumb": "gophers/senior-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "idea",
+    "file": "gophers/idea.png",
+    "thumb": "gophers/idea-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "architecture",
+    "file": "gophers/architecture.png",
+    "thumb": "gophers/architecture-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "graduate",
+    "file": "gophers/graduate.png",
+    "thumb": "gophers/graduate-128.png",
+    "role": "Go Gopher pixel art"
+  },
+  {
+    "name": "sleep",
+    "file": "gophers/sleep.png",
+    "thumb": "gophers/sleep-128.png",
+    "role": "Go Gopher pixel art"
+  }
+]

@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {sliceRetentionScenario,deliveryScenario,capacityScenario} from '../src/features/senior/engine/simulations.mjs';
+test('slice copy removes retained excess',()=>{const a=sliceRetentionScenario({backingBytes:100000,retainedBytes:100,copy:false});const b=sliceRetentionScenario({backingBytes:100000,retainedBytes:100,copy:true});assert.ok(a.extraBytes>b.extraBytes);assert.equal(b.modeledRetained,100)});
+test('invalid retention input rejected',()=>assert.throws(()=>sliceRetentionScenario({backingBytes:10,retainedBytes:12})));
+test('idempotency removes duplicate effects',()=>{const a=deliveryScenario({events:20,replays:8});const b=deliveryScenario({events:20,replays:8,idempotent:true});assert.equal(a.duplicateEffects,8);assert.equal(b.duplicateEffects,0);assert.equal(b.effects,20)});
+test('invalid delivery input rejected',()=>assert.throws(()=>deliveryScenario({events:3,replays:4})));
+test('capacity model conserves arrivals, processed, queued and rejected',()=>{for(const incoming of [0,1,20,50]){const r=capacityScenario({arrivalsPerTick:incoming,servedPerTick:4,capacity:7,ticks:10});assert.equal(r.arrived,r.completed+r.queued+r.rejected)}});
+test('raising service capacity does not increase rejected count',()=>{const a=capacityScenario({arrivalsPerTick:20,servedPerTick:3,capacity:10});const b=capacityScenario({arrivalsPerTick:20,servedPerTick:10,capacity:10});assert.ok(b.rejected<=a.rejected)});
+test('invalid capacity input rejected',()=>assert.throws(()=>capacityScenario({capacity:-1})));

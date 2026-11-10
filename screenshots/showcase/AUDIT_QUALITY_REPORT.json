@@ -1,0 +1,167 @@
+[
+  {
+    "section": "Portada START / Home",
+    "completeness": 9,
+    "visualDesign": 9.5,
+    "interactivity": 9,
+    "educationalImpact": 9,
+    "strongPoints": "Estética limpia 80/20, Gopher animado con laptop, métricas claras (54 Go, 18 Senior, 8 Frameworks), botones Start/Explore directos.",
+    "missingForTen": "Agregar tooltip o modal explicativo en los badges de métricas que detalle cómo se distribuyen las horas estimadas de estudio.",
+    "screenshot": "01_hero_showcase.png",
+    "averageScore": 9.1
+  },
+  {
+    "section": "Catálogo de Módulos (Básico, Intermedio, Avanzado, Senior)",
+    "completeness": 8.5,
+    "visualDesign": 9,
+    "interactivity": 8.5,
+    "educationalImpact": 9,
+    "strongPoints": "Organización temática muy clara, barra lateral con conteo exacto de módulos y navegación hash responsiva.",
+    "missingForTen": "Los módulos B02-B12, I01-I12 y A01-A12 están actualmente como vistas preliminares (preview/planned); para ser 10/10 se requiere redactar el contenido extendido de lecciones de los 36 módulos estándar.",
+    "screenshot": "02_learning_tracks.png",
+    "averageScore": 8.8
+  },
+  {
+    "section": "Editor Interactivo de Código Go (B01)",
+    "completeness": 9,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 9.5,
+    "strongPoints": "Editor ligero sin lag, validación sintáctica determinista, botón de pistas, feedback visual y guardado automático con XP.",
+    "missingForTen": "Añadir un selector de ejemplos adicionales y syntax highlighting en tiempo real dentro del textarea sin romper el bundle ligero.",
+    "screenshot": "03_code_editor_b01.png",
+    "averageScore": 9.4
+  },
+  {
+    "section": "Minijuegos Educativos (Quiz, Complete, Order, Predict, Bug)",
+    "completeness": 9,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 9,
+    "strongPoints": "5 mecánicas dinámicas diferentes que refuerzan conceptos clave sin exigir un motor de juegos pesado.",
+    "missingForTen": "Expandir el banco de preguntas por cada nivel para que el minijuego tenga un modo infinito o aleatorio de 20 preguntas.",
+    "screenshot": "04_game_mode_interactive.png",
+    "averageScore": 9.3
+  },
+  {
+    "section": "Especialización Backend: Frameworks Academy",
+    "completeness": 8,
+    "visualDesign": 9,
+    "interactivity": 8,
+    "educationalImpact": 8.5,
+    "strongPoints": "Presentación limpia de los 8 frameworks, snippet de arranque de servidor HTTP y metadata clara.",
+    "missingForTen": "Integrar una tabla comparativa interactiva de throughput, latencia y casos de uso recomendados para cada framework.",
+    "screenshot": "05_frameworks_comparison.png",
+    "averageScore": 8.4
+  },
+  {
+    "section": "Senior Mode Dashboard",
+    "completeness": 9.5,
+    "visualDesign": 10,
+    "interactivity": 9.5,
+    "educationalImpact": 9.5,
+    "strongPoints": "Corona dorada Senior, paleta de contraste alta, 18 tarjetas con estados precisos de avance (Decisiones, Evidencias, Incidentes, Reviews).",
+    "missingForTen": "Incorporar un filtro por categoría (Fiabilidad, Concurrencia, Rendimiento, Seguridad) en el header del dashboard.",
+    "screenshot": "06_senior_dashboard_crown.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Simulador Determinista de Worker Pool (S05)",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 10,
+    "educationalImpact": 10,
+    "strongPoints": "Simulación matemática perfecta sin inventar falsos hilos en el navegador. Demuestra rechazo por cola llena y utilización.",
+    "missingForTen": "Añadir un minigráfico SVG de barras o línea temporal que grafique la evolución de la cola a lo largo de los ticks.",
+    "screenshot": "07_senior_worker_pool_sim.png",
+    "averageScore": 9.8
+  },
+  {
+    "section": "Laboratorio de Code Review Senior (S01-S18)",
+    "completeness": 10,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 10,
+    "strongPoints": "Código Go realista de pull request, preguntas que exigen justificar trade-offs y evaluación objetiva recalculada.",
+    "missingForTen": "Incluir una pestaña de \"Comentario de revisión sugerido\" para enseñar al estudiante a redactar comentarios amables y constructivos en GitHub.",
+    "screenshot": "08_senior_code_review.png",
+    "averageScore": 9.8
+  },
+  {
+    "section": "Laboratorio de Decisiones de Arquitectura",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 10,
+    "strongPoints": "Preguntas desafiantes que penalizan la simplificación ingenua y premian el criterio de producción.",
+    "missingForTen": "Añadir un enlace a referencias de la documentación oficial de Go (Go Blog / Effective Go) en la retroalimentación de cada opción.",
+    "screenshot": "09_senior_decision_lab.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Laboratorio de Evidencias Técnicas",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 10,
+    "strongPoints": "Enseña a leer volcados de memoria, logs JSON y perfiles pprof reales sin salir del navegador.",
+    "missingForTen": "Añadir botones para copiar fragmentos de la evidencia técnica al portapapeles para facilitar su lectura en pantalla completa.",
+    "screenshot": "10_senior_evidence_lab.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Laboratorio de Incidentes Operativos",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 10,
+    "strongPoints": "Diferenciación estricta entre diagnóstico de causa raíz y acción de mitigación de emergencia.",
+    "missingForTen": "Añadir un temporizador simulado opcional (modo simulación de guardia de producción) para practicar toma de decisiones bajo presión.",
+    "screenshot": "11_senior_operations_lab.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Guías Técnicas de Estudio Senior",
+    "completeness": 10,
+    "visualDesign": 9.5,
+    "interactivity": 9,
+    "educationalImpact": 10,
+    "strongPoints": "18 guías completas con análisis conceptual, riesgos, código fuente de solución y tests nativos 100% coincidentes.",
+    "missingForTen": "Añadir índice de navegación flotante tipo tabla de contenidos para saltar directamente a Solución o Pruebas.",
+    "screenshot": "12_senior_technical_guide.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Matriz de Preparación Senior (Readiness)",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 9.5,
+    "strongPoints": "Porcentaje global de preparación basado únicamente en pruebas aprobadas, sin autoevaluaciones falsas.",
+    "missingForTen": "Añadir un gráfico de radar visual (SVG) de 6 ejes que represente visualmente las 6 competencias maestras.",
+    "screenshot": "13_senior_readiness_radar.png",
+    "averageScore": 9.5
+  },
+  {
+    "section": "Capstone de Producción Go",
+    "completeness": 10,
+    "visualDesign": 9.5,
+    "interactivity": 9,
+    "educationalImpact": 10,
+    "strongPoints": "6 subsistemas reales de ingeniería con pruebas de estrés de 200 goroutines y fuzz testing determinista.",
+    "missingForTen": "Añadir un botón para copiar el comando de ejecución local `cd labs-native/capstone && go test -race -v ./...` con un solo clic.",
+    "screenshot": "14_senior_capstone_orders.png",
+    "averageScore": 9.6
+  },
+  {
+    "section": "Ajustes, 6 Idiomas y Portabilidad",
+    "completeness": 9.5,
+    "visualDesign": 9.5,
+    "interactivity": 9.5,
+    "educationalImpact": 9,
+    "strongPoints": "Soporte de 6 idiomas (es, en, ja, zh, pt, fr), exportar/importar JSON de progreso con validación estricta y reset de fábrica.",
+    "missingForTen": "Añadir un switch para tamaño de fuente en el editor de código (pequeño / mediano / grande).",
+    "screenshot": "15_settings_and_i18n.png",
+    "averageScore": 9.4
+  }
+]
