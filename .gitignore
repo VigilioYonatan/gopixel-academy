@@ -7,3 +7,4 @@ dist/
 .env.*.local
 screenshots/master-e2e/
 screenshots/button-e2e/
+test-results/
