@@ -34,6 +34,7 @@ import pt from '../i18n/pt.json';
 import fr from '../i18n/fr.json';
 import { goExamples, lessonGuides } from '../data/learning-exercises';
 import { frameworkCurriculum } from '../data/frameworks-curriculum';
+import { gameBank } from '../data/learning-games';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
 type Theme = 'dark' | 'light';
@@ -192,30 +193,347 @@ function Lesson({t,locale,id,prefs,updateDraft,mark}:{t:(k:string)=>string;local
  return <div class="content-page lesson-page"><div class="breadcrumbs"><a href="#/learn">{t('learn')}</a><span>/</span><a href={`#/learn/${m.track}`}>{t(m.track)}</a><span>/</span><b>{m.id}</b></div><PageHeading eyebrow={`${t('lesson')} ${m.id}`} title={m.title[locale]} subtitle={m.summary[locale]}/><div class="lesson-layout"><div class="lesson-main"><Card className="lesson-intro"><div class="lesson-intro-head"><div><h2>{t('objectives')}</h2><p>{m.summary[locale]}</p></div><div class="lesson-intro-art"><Gopher name={spec?'reading':'architecture'}/></div></div>{guide?.concepts[locale]&&<div class="concept-grid">{guide.concepts[locale].map(c=><div class="concept-item" key={c.term}><code>{c.term}</code><p>{c.desc}</p></div>)}</div>}{!spec&&<p class="notice">{t('contentPlan')}</p>}</Card>{guide?.mission[locale]&&<div class="lesson-mission"><div class="lesson-mission-title"><Icon name="check" size={18}/><span>{locale==='es'?'🎯 Tu Misión':locale==='en'?'🎯 Your Mission':locale==='ja'?'🎯 ミッション':locale==='zh'?'🎯 当前任务':locale==='pt'?'🎯 Sua Missão':'🎯 Votre Mission'}</span></div><p>{guide.mission[locale]}</p></div>}<Card className="editor-card"><div class="panel-title"><span><Icon name="terminal" size={18}/> main.go</span><span class="tag info">{spec?t('preview'):t('planned')}</span></div>{spec?<><textarea aria-label={t('code')} spellcheck={false} class={`code-editor font-${prefs.fontSize || "md"}`} value={localCode} onInput={e=>{const v=(e.currentTarget as HTMLTextAreaElement).value;setLocalCode(v);updateDraft(id,v);setFeedback(null)}} /><div class="editor-actions"><Button onClick={()=>{const pass=spec.test(localCode);setFeedback(pass?'correct':'incorrect');if(pass)mark(id)}}><Icon name="check" size={18}/>{t('validate')}</Button><Button kind="outline" onClick={()=>{setLocalCode(spec.code);updateDraft(id,spec.code);setFeedback(null)}}>{t('reset')}</Button><Button kind="quiet" onClick={()=>setShowHint(!showHint)}>{t('hint')}</Button></div>{showHint&&<div class="hint-box"><Icon name="question" size={18}/><code>{spec.hint}</code></div>}{feedback&&<div class={`feedback ${feedback}`}>{feedback==='correct'?'✓ ':'○ '}{t(feedback)}</div>}<p class="small-disclaimer">{t('runUnavailable')}</p></>:<div class="empty-editor"><Icon name="book" size={34}/>{t('contentPlan')}</div>}</Card></div><aside class="lesson-side"><Card className="side-panel"><h3>{locale==='es'?'Paso a paso':locale==='en'?'Step by Step':locale==='ja'?'学習ステップ':locale==='zh'?'学习步骤':locale==='pt'?'Passo a Passo':'Étape par étape'}</h3><ul class="steps-list">{(guide?.steps[locale]||['01 · Lee la lección','02 · Completa el código','03 · Comprueba tu solución']).map((s,idx)=><li key={idx}>{s}</li>)}</ul></Card><Card className="side-gopher"><Gopher name="idea"/><p>{locale==='es'?'Escribe en el editor y pulsa "Comprobar solución" para ganar XP.':locale==='en'?'Type in the editor and click "Check solution" to earn XP.':locale==='ja'?'エディタに入力し「解答を確認」をクリックしてXPを獲得。':locale==='zh'?'在编辑器中输入并点击“验证代码”以获得经验值。':locale==='pt'?'Digite no editor e clique em "Validar solução" para ganhar XP.':'Tapez dans l\'éditeur et cliquez sur "Vérifier la solution" pour gagner des XP.'}</p></Card></aside></div></div>;
 }
 
-const questions: Record<Locale,{q:string,explain:string,bugQ:string}>={
- es:{q:'¿Qué palabra inicia una goroutine?',explain:'La palabra clave go inicia una llamada de función como goroutine.',bugQ:'¿Qué falta en fmt.Println("Hola" ?'},
- en:{q:'Which keyword starts a goroutine?',explain:'The go keyword starts a function call as a goroutine.',bugQ:'What is missing in fmt.Println("Hello" ?'},
- ja:{q:'goroutineを開始するキーワードは？',explain:'goキーワードで関数呼び出しをgoroutineとして実行します。',bugQ:'fmt.Println("Hola" に足りないものは？'},
- zh:{q:'哪个关键字启动 goroutine？',explain:'go 关键字将函数调用作为 goroutine 启动。',bugQ:'fmt.Println("Hola" 缺少什么？'},
- pt:{q:'Qual palavra inicia uma goroutine?',explain:'A palavra go inicia uma chamada de função como goroutine.',bugQ:'O que falta em fmt.Println("Hola" ?'},
- fr:{q:'Quel mot-clé lance une goroutine ?',explain:'Le mot-clé go lance un appel de fonction dans une goroutine.',bugQ:'Que manque-t-il dans fmt.Println("Hola" ?'}
-};
-const gameModes=[{id:'quiz',icon:'question'},{id:'complete',icon:'code'},{id:'order',icon:'puzzle'},{id:'predict',icon:'terminal'},{id:'bug',icon:'bug'}];
-function Games({t,locale,prefs,update,initialMode}:{t:(k:string)=>string;locale:Locale;prefs:Prefs;update:(v:Partial<Prefs>)=>void;initialMode?:string}) {
- const [mode,setMode]=useState(()=>gameModes.some(g=>g.id===initialMode)?(initialMode || 'quiz'):'quiz');useEffect(()=>{if(initialMode && gameModes.some(g=>g.id===initialMode))setMode(initialMode)},[initialMode]);const [choice,setChoice]=useState('');const [answer,setAnswer]=useState<'correct'|'incorrect'|null>(null);
- const [items,setItems]=useState(['fmt.Println("Hola")','func main() {','package main','import "fmt"','}']);
- const [text,setText]=useState('');
- const win=()=>{setAnswer('correct');if(!prefs.gameWins.includes(mode))update({gameWins:[...prefs.gameWins,mode],xp:prefs.xp+15})};
- const validate=()=>{const good=mode==='quiz'?choice==='go':mode==='complete'?text.trim()==='Println':mode==='predict'?choice==='6':mode==='bug'?choice==='parenthesis':items.join('|')==='package main|import "fmt"|func main() {|fmt.Println("Hola")|}';good?win():setAnswer('incorrect')};
- const select=(key:string)=>{setMode(key);setAnswer(null);setChoice('');setText('')};
- return <div class="content-page"><PageHeading eyebrow="PLAY & LEARN" title={t('games')} subtitle={t('gameDesc')}/><div class="games-grid">{gameModes.map(g=><button type="button" class={`game-tile ${mode===g.id?'chosen':''}`} onClick={()=>{select(g.id);routeTo(`games/${g.id}`)}}><span><Icon name={g.icon} size={28}/></span><b>{t(g.id)}</b><small>{prefs.gameWins.includes(g.id)?'✓':'5 MIN'}</small></button>)}</div><Card className="game-arena"><div class="game-arena-head"><span class="eyebrow small">GO PIXEL MINI LAB</span><b>{t(mode)}</b></div>
- {mode==='quiz'&&<><h2>{questions[locale].q}</h2><div class="option-grid">{['go','spawn','async','thread'].map(x=><button type="button" class={`choice ${choice===x?'chosen':''}`} onClick={()=>setChoice(x)}>{x}</button>)}</div></>}
- {mode==='complete'&&<><h2>{t('complete')}</h2><pre class="mini-code">{'package main\nimport "fmt"\nfunc main() {\n  fmt.____("Hola")\n}'}</pre><label>{t('answer')}<input value={text} onInput={e=>setText((e.currentTarget as HTMLInputElement).value)} placeholder="Println"/></label></>}
- {mode==='predict'&&<><h2>{t('predict')}</h2><pre class="mini-code">{'x := 2\nx *= 3\nfmt.Println(x)'}</pre><div class="option-grid">{['4','5','6','8'].map(x=><button type="button" class={`choice ${choice===x?'chosen':''}`} onClick={()=>setChoice(x)}>{x}</button>)}</div></>}
- {mode==='bug'&&<><h2>{questions[locale].bugQ}</h2><pre class="mini-code">{'fmt.Println("Hola"'}</pre><div class="option-grid">{[{id:'semicolon',text:';'},{id:'parenthesis',text:')'},{id:'bracket',text:'}'},{id:'quote',text:'"'}].map(x=><button type="button" class={`choice ${choice===x.id?'chosen':''}`} onClick={()=>setChoice(x.id)}>{x.text}</button>)}</div></>}
- {mode==='order'&&<><h2>{t('order')}</h2><div class="order-list">{items.map((x,i)=><div class="order-item"><code>{x}</code><div><button type="button" disabled={i===0} aria-label="Move up" onClick={()=>setItems(a=>{const n=[...a];[n[i-1],n[i]]=[n[i],n[i-1]];return n})}>↑</button><button type="button" disabled={i===items.length-1} aria-label="Move down" onClick={()=>setItems(a=>{const n=[...a];[n[i+1],n[i]]=[n[i],n[i+1]];return n})}>↓</button></div></div>)}</div></>}
- <div class="game-actions"><Button onClick={validate}>{t('validate')}</Button><Button kind="outline" onClick={()=>select(mode)}>{t('reset')}</Button></div>{answer&&<div class={`feedback ${answer}`}>{t(answer)} {answer==='correct'&&mode==='quiz'?questions[locale].explain:''}</div>}
- </Card></div>
+const gameModes = [
+  { id: 'quiz', icon: 'question' },
+  { id: 'complete', icon: 'code' },
+  { id: 'order', icon: 'puzzle' },
+  { id: 'predict', icon: 'terminal' },
+  { id: 'bug', icon: 'bug' },
+];
+
+function Games({
+  t,
+  locale,
+  prefs,
+  update,
+  initialMode,
+}: {
+  t: (k: string) => string;
+  locale: Locale;
+  prefs: Prefs;
+  update: (v: Partial<Prefs>) => void;
+  initialMode?: string;
+}) {
+  const [mode, setMode] = useState<string>(() =>
+    gameModes.some((g) => g.id === initialMode) ? (initialMode || 'quiz') : 'quiz'
+  );
+  const [levelIndex, setLevelIndex] = useState<number>(0);
+  const [choice, setChoice] = useState('');
+  const [answer, setAnswer] = useState<'correct' | 'incorrect' | null>(null);
+  const [items, setItems] = useState<string[]>(() => [...gameBank.order[0].initialItems]);
+  const [text, setText] = useState('');
+  const [completedLevels, setCompletedLevels] = useState<Record<string, number[]>>({});
+
+  useEffect(() => {
+    if (initialMode && gameModes.some((g) => g.id === initialMode)) {
+      setMode(initialMode);
+      setLevelIndex(0);
+      setAnswer(null);
+      setChoice('');
+      setText('');
+    }
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (mode === 'order') {
+      const cur = gameBank.order[levelIndex] || gameBank.order[0];
+      setItems([...cur.initialItems]);
+    }
+  }, [mode, levelIndex]);
+
+  const win = () => {
+    setAnswer('correct');
+    const prev = completedLevels[mode] || [];
+    if (!prev.includes(levelIndex)) {
+      setCompletedLevels((c) => ({ ...c, [mode]: [...(c[mode] || []), levelIndex] }));
+    }
+    if (!prefs.gameWins.includes(mode)) {
+      update({ gameWins: [...prefs.gameWins, mode], xp: prefs.xp + 15 });
+    } else {
+      update({ xp: prefs.xp + 5 });
+    }
+  };
+
+  const validate = () => {
+    let good = false;
+    if (mode === 'quiz') {
+      const q = gameBank.quiz[levelIndex] || gameBank.quiz[0];
+      good = choice === q.correctAnswer;
+    } else if (mode === 'complete') {
+      const c = gameBank.complete[levelIndex] || gameBank.complete[0];
+      good = text.trim() === c.expected;
+    } else if (mode === 'predict') {
+      const p = gameBank.predict[levelIndex] || gameBank.predict[0];
+      good = choice === p.correctAnswer;
+    } else if (mode === 'bug') {
+      const b = gameBank.bug[levelIndex] || gameBank.bug[0];
+      good = choice === b.correctAnswer;
+    } else if (mode === 'order') {
+      const o = gameBank.order[levelIndex] || gameBank.order[0];
+      good = items.join('|') === o.correctOrder.join('|');
+    }
+    good ? win() : setAnswer('incorrect');
+  };
+
+  const select = (key: string) => {
+    setMode(key);
+    setLevelIndex(0);
+    setAnswer(null);
+    setChoice('');
+    setText('');
+    if (key === 'order') {
+      setItems([...gameBank.order[0].initialItems]);
+    }
+  };
+
+  const selectLevel = (idx: number) => {
+    setLevelIndex(idx);
+    setAnswer(null);
+    setChoice('');
+    setText('');
+    if (mode === 'order') {
+      const cur = gameBank.order[idx] || gameBank.order[0];
+      setItems([...cur.initialItems]);
+    }
+  };
+
+  const nextChallenge = () => {
+    if (levelIndex < 4) {
+      selectLevel(levelIndex + 1);
+    }
+  };
+
+  const curQuiz = gameBank.quiz[levelIndex] || gameBank.quiz[0];
+  const curComplete = gameBank.complete[levelIndex] || gameBank.complete[0];
+  const curOrder = gameBank.order[levelIndex] || gameBank.order[0];
+  const curPredict = gameBank.predict[levelIndex] || gameBank.predict[0];
+  const curBug = gameBank.bug[levelIndex] || gameBank.bug[0];
+
+  const totalLevels = 5;
+  const currentCompleted = completedLevels[mode] || [];
+
+  const challengeLabel =
+    locale === 'es' ? 'Reto' :
+    locale === 'en' ? 'Challenge' :
+    locale === 'ja' ? 'チャレンジ' :
+    locale === 'zh' ? '关卡' :
+    locale === 'pt' ? 'Desafio' : 'Défi';
+
+  const ofLabel =
+    locale === 'es' ? 'de' :
+    locale === 'en' ? 'of' :
+    locale === 'ja' ? '/' :
+    locale === 'zh' ? '/' :
+    locale === 'pt' ? 'de' : 'sur';
+
+  const nextLabel =
+    locale === 'es' ? 'Siguiente reto →' :
+    locale === 'en' ? 'Next challenge →' :
+    locale === 'ja' ? '次のチャレンジ →' :
+    locale === 'zh' ? '下一关 →' :
+    locale === 'pt' ? 'Próximo desafio →' : 'Défi suivant →';
+
+  const allCompletedLabel =
+    locale === 'es' ? '¡Todos los retos superados! +15 XP' :
+    locale === 'en' ? 'All challenges completed! +15 XP' :
+    locale === 'ja' ? '全チャレンジ達成！+15 XP' :
+    locale === 'zh' ? '全部关卡通过！+15 XP' :
+    locale === 'pt' ? 'Todos os desafios superados! +15 XP' : 'Tous les défis réussis ! +15 XP';
+
+  const explanation =
+    mode === 'quiz' ? curQuiz.explanation[locale] :
+    mode === 'complete' ? curComplete.explanation[locale] :
+    mode === 'predict' ? curPredict.explanation[locale] :
+    mode === 'bug' ? curBug.explanation[locale] :
+    curOrder.explanation[locale];
+
+  return (
+    <div class="content-page">
+      <PageHeading eyebrow="PLAY & LEARN" title={t('games')} subtitle={t('gameDesc')} />
+      <div class="games-grid">
+        {gameModes.map((g) => (
+          <button
+            type="button"
+            key={g.id}
+            class={`game-tile ${mode === g.id ? 'chosen' : ''}`}
+            onClick={() => {
+              select(g.id);
+              routeTo(`games/${g.id}`);
+            }}
+          >
+            <span>
+              <Icon name={g.icon} size={28} />
+            </span>
+            <b>{t(g.id)}</b>
+            <small>{prefs.gameWins.includes(g.id) ? '✓' : '5 MIN'}</small>
+          </button>
+        ))}
+      </div>
+      <Card className="game-arena">
+        <div class="game-arena-head">
+          <span class="eyebrow small">GO PIXEL MINI LAB</span>
+          <b>{t(mode)}</b>
+        </div>
+
+        <div class="game-level-nav">
+          <span class="game-challenge-badge">
+            🎯 {challengeLabel} {levelIndex + 1} {ofLabel} {totalLevels}
+          </span>
+          <div class="game-level-pills" role="tablist" aria-label="Selector de reto">
+            {Array.from({ length: totalLevels }).map((_, idx) => {
+              const isCurrent = levelIndex === idx;
+              const isDone = currentCompleted.includes(idx);
+              return (
+                <button
+                  type="button"
+                  key={idx}
+                  class={`level-pill ${isCurrent ? 'active' : ''} ${isDone ? 'completed' : ''}`}
+                  onClick={() => selectLevel(idx)}
+                  aria-label={`${challengeLabel} ${idx + 1}`}
+                >
+                  {isDone ? `✓ ${idx + 1}` : idx + 1}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {mode === 'quiz' && (
+          <>
+            <h2>{curQuiz.question[locale]}</h2>
+            <div class="option-grid">
+              {curQuiz.options.map((x) => (
+                <button
+                  type="button"
+                  key={x}
+                  class={`choice ${choice === x ? 'chosen' : ''}`}
+                  onClick={() => setChoice(x)}
+                >
+                  {x}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {mode === 'complete' && (
+          <>
+            <h2>{curComplete.title[locale]}</h2>
+            <pre class="mini-code">{curComplete.snippet}</pre>
+            <label>
+              {t('answer')}
+              <input
+                value={text}
+                onInput={(e) => setText((e.currentTarget as HTMLInputElement).value)}
+                placeholder={curComplete.placeholder}
+              />
+            </label>
+            <p class="game-hint-text">💡 {curComplete.hint[locale]}</p>
+          </>
+        )}
+
+        {mode === 'predict' && (
+          <>
+            <h2>{curPredict.title[locale]}</h2>
+            <pre class="mini-code">{curPredict.snippet}</pre>
+            <div class="option-grid">
+              {curPredict.options.map((x) => (
+                <button
+                  type="button"
+                  key={x}
+                  class={`choice ${choice === x ? 'chosen' : ''}`}
+                  onClick={() => setChoice(x)}
+                >
+                  {x}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {mode === 'bug' && (
+          <>
+            <h2>{curBug.question[locale]}</h2>
+            <pre class="mini-code">{curBug.snippet}</pre>
+            <div class="option-grid">
+              {curBug.options.map((x) => (
+                <button
+                  type="button"
+                  key={x.id}
+                  class={`choice ${choice === x.id ? 'chosen' : ''}`}
+                  onClick={() => setChoice(x.id)}
+                >
+                  {x.text}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {mode === 'order' && (
+          <>
+            <h2>{curOrder.title[locale]}</h2>
+            <div class="order-list">
+              {items.map((x, i) => (
+                <div class="order-item" key={x}>
+                  <code>{x}</code>
+                  <div>
+                    <button
+                      type="button"
+                      disabled={i === 0}
+                      aria-label="Move up"
+                      onClick={() =>
+                        setItems((a) => {
+                          const n = [...a];
+                          [n[i - 1], n[i]] = [n[i], n[i - 1]];
+                          return n;
+                        })
+                      }
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      disabled={i === items.length - 1}
+                      aria-label="Move down"
+                      onClick={() =>
+                        setItems((a) => {
+                          const n = [...a];
+                          [n[i + 1], n[i]] = [n[i], n[i + 1]];
+                          return n;
+                        })
+                      }
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div class="game-actions">
+          <Button onClick={validate}>{t('validate')}</Button>
+          <Button kind="outline" onClick={() => selectLevel(levelIndex)}>
+            {t('reset')}
+          </Button>
+          {answer === 'correct' && levelIndex < totalLevels - 1 && (
+            <Button onClick={nextChallenge}>
+              {nextLabel}
+            </Button>
+          )}
+        </div>
+
+        {answer && (
+          <div class={`feedback ${answer}`}>
+            {t(answer)} {answer === 'correct' ? ` ${explanation}` : ''}
+            {answer === 'correct' && levelIndex === totalLevels - 1 ? ` · 🌟 ${allCompletedLabel}` : ''}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
 }
 const frameworkSnippets: Record<string, string> = {
   F01: `package main

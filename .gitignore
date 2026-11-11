@@ -5,9 +5,9 @@ dist/
 .DS_Store
 .env.local
 .env.*.local
-screenshots/master-e2e/
-screenshots/button-e2e/
+screenshots/
 test-results/
+*.zip
 *.rar
 *.tar*
 *.7z
