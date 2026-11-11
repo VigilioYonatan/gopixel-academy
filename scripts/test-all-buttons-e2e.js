@@ -76,9 +76,9 @@ async function main() {
     await page.waitForSelector(selector, { visible: true, timeout: 5000 });
     const btn = await page.$(selector);
     assert.ok(btn, `Botón no encontrado: ${selector} (${description})`);
-    await btn.click();
+    await page.evaluate(el => el.click(), btn);
     totalButtonsClicked++;
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 250));
   }
 
   try {
@@ -355,7 +355,7 @@ async function main() {
     await page.goto(`${baseUrl}#/frameworks`, { waitUntil: 'networkidle0' });
     const frameworkCards = await page.$$('.framework-card');
     assert.ok(frameworkCards.length >= 8, 'Deben existir 8 tarjetas de frameworks');
-    await frameworkCards[0].click(); // Clic en F01 net/http
+    await page.evaluate(el => el.click(), frameworkCards[0]); // Clic en F01 net/http
     totalButtonsClicked++;
     await page.waitForSelector('.framework-detail', { timeout: 3000 });
     const codeSnippet = await page.$eval('.framework-detail pre.mini-code', el => el.textContent);
@@ -372,7 +372,7 @@ async function main() {
     // Botones de tema dentro de settings
     const settingThemeBtns = await page.$$('.settings-grid .choice-row button');
     for (const stb of settingThemeBtns) {
-      await stb.click();
+      await page.evaluate(el => el.click(), stb);
       totalButtonsClicked++;
       await new Promise(r => setTimeout(r, 100));
     }

@@ -1,5 +1,15 @@
 import { useMemo, useState } from 'preact/hooks';
-import { inventoryScenario, retryStormScenario, sliceRetentionScenario, deliveryScenario, capacityScenario } from './engine/simulations.mjs';
+import {
+  inventoryScenario,
+  retryStormScenario,
+  sliceRetentionScenario,
+  deliveryScenario,
+  capacityScenario,
+  idempotencyWindowScenario,
+  dataRaceScenario,
+  latencyPercentilesScenario,
+  gracefulShutdownScenario,
+} from './engine/simulations.mjs';
 import { simulateWorkerPool } from './engine/worker-pool.mjs';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
@@ -66,7 +76,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: 'Procesados por paso',
     processed: 'Procesados',
     queued: 'En cola',
-    s18Disclaimer: 'Modelo determinista; no representa métricas Go ni latencias de producción.'
+    s18Disclaimer: 'Modelo determinista; no representa métricas Go ni latencias de producción.',
+    s03Title: 'S03 · Idempotencia y expiración TTL de caché',
+    s03Subtitle: 'Modelo conceptual de deduplicación con ventana de expiración en segundos.',
+    dupRate: 'Tasa de duplicados',
+    ttlSeconds: 'TTL del caché (seg)',
+    windowSeconds: 'Ventana de reintentos (seg)',
+    uniqueReqs: 'Peticiones únicas',
+    filteredDups: 'Duplicados filtrados',
+    leakedDups: 'Duplicados filtrados a BD',
+    dbWrites: 'Escrituras finales en BD',
+    s03Disclaimer: 'Modelo conceptual determinista; en producción se requiere Redis SETNX o transacciones PostgreSQL.',
+    s06Title: 'S06 · Condiciones de carrera vs sincronización atómica',
+    s06Subtitle: 'Modelo conceptual de escrituras concurrentes sin mutex vs sync/atomic.',
+    goroutines: 'Goroutines',
+    iterations: 'Iteraciones por goroutine',
+    syncMode: 'Modo de sincronización',
+    syncNone: 'Sin sincronización (Race)',
+    syncAtomic: 'sync/atomic (Atómico)',
+    syncMutex: 'sync.Mutex (Exclusión mutua)',
+    targetCount: 'Conteo esperado',
+    finalCount: 'Conteo alcanzado',
+    lostUpdates: 'Actualizaciones perdidas',
+    raceDetected: 'Condición de carrera detectada (escrituras perdidas).',
+    raceClean: 'Sin condición de carrera: sincronización segura.',
+    s06Disclaimer: 'Modelo conceptual sin compilador Go. Ejecuta "go test -race" en tu terminal para validar código real.',
+    s14Title: 'S14 · Latencia de cola P99 y presión de memoria',
+    s14Subtitle: 'Impacto de las asignaciones de memoria y el GC pacer en los percentiles P50, P90 y P99.',
+    baseLatency: 'Latencia base (ms)',
+    allocsPerOp: 'Asignaciones por op',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50 (mediana)',
+    p90Label: 'P90',
+    p99Label: 'P99 (cola crítica)',
+    jitterLabel: 'Jitter (P99 - P50)',
+    s14Disclaimer: 'Modelo determinista didáctico; el GC real de Go depende de concurrencia de CPUs, memoria residente y pausas STW.',
+    s15Title: 'S15 · Drenado de conexiones en Graceful Shutdown',
+    s15Subtitle: 'Comparación entre terminación abrupta (SIGKILL) y drenado ordenado con http.Server.Shutdown(ctx).',
+    inFlightReqs: 'Peticiones en vuelo',
+    drainTimeout: 'Timeout de drenado (seg)',
+    reqDuration: 'Duración de peticiones (seg)',
+    shutdownStrat: 'Estrategia de apagado',
+    stratGraceful: 'Graceful (Shutdown ordenado)',
+    stratHard: 'Abrupto (SIGKILL inmediato)',
+    drainedCleanly: 'Completadas con éxito',
+    droppedConns: 'Conexiones caídas (502/RST)',
+    zeroDowntime: 'Zero-Downtime: ninguna petición interrumpida.',
+    downtimeOccurred: 'Caída de servicio: conexiones de clientes destruidas.',
+    s15Disclaimer: 'Simulación didáctica; en Kubernetes o Linux se coordina con preStop hooks y balanceadores.',
   },
   en: {
     s05Title: 'S05 · Worker pool simulator · Deterministic model',
@@ -129,7 +186,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: 'Processed per tick',
     processed: 'Processed',
     queued: 'Queued',
-    s18Disclaimer: 'Deterministic model; does not represent live Go metrics or production latencies.'
+    s18Disclaimer: 'Deterministic model; does not represent live Go metrics or production latencies.',
+    s03Title: 'S03 · Idempotency and cache TTL expiration',
+    s03Subtitle: 'Conceptual deduplication model with retry window and expiration.',
+    dupRate: 'Duplicate rate',
+    ttlSeconds: 'Cache TTL (sec)',
+    windowSeconds: 'Retry window (sec)',
+    uniqueReqs: 'Unique requests',
+    filteredDups: 'Filtered duplicates',
+    leakedDups: 'Leaked to DB',
+    dbWrites: 'Total DB writes',
+    s03Disclaimer: 'Conceptual deterministic model; production systems require Redis SETNX or PostgreSQL transactions.',
+    s06Title: 'S06 · Data race vs atomic synchronization',
+    s06Subtitle: 'Conceptual model of unsynchronized concurrent writes vs sync/atomic.',
+    goroutines: 'Goroutines',
+    iterations: 'Iterations per goroutine',
+    syncMode: 'Sync mode',
+    syncNone: 'No synchronization (Race)',
+    syncAtomic: 'sync/atomic (Atomic)',
+    syncMutex: 'sync.Mutex (Mutual exclusion)',
+    targetCount: 'Expected count',
+    finalCount: 'Reached count',
+    lostUpdates: 'Lost updates',
+    raceDetected: 'Data race detected (lost updates).',
+    raceClean: 'Clean: race-free synchronization.',
+    s06Disclaimer: 'Conceptual model without Go runtime. Run "go test -race" locally to verify real Go code.',
+    s14Title: 'S14 · P99 tail latency and memory pressure',
+    s14Subtitle: 'Impact of memory allocations and GC pacing on P50, P90, and P99 percentiles.',
+    baseLatency: 'Base latency (ms)',
+    allocsPerOp: 'Allocs per op',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50 (median)',
+    p90Label: 'P90',
+    p99Label: 'P99 (tail latency)',
+    jitterLabel: 'Jitter (P99 - P50)',
+    s14Disclaimer: 'Pedagogical deterministic model; real Go GC depends on core count, heap size, and STW pauses.',
+    s15Title: 'S15 · Connection draining in Graceful Shutdown',
+    s15Subtitle: 'Comparison between hard abort (SIGKILL) and clean draining with http.Server.Shutdown(ctx).',
+    inFlightReqs: 'In-flight requests',
+    drainTimeout: 'Drain timeout (sec)',
+    reqDuration: 'Request duration (sec)',
+    shutdownStrat: 'Shutdown strategy',
+    stratGraceful: 'Graceful (Orderly drain)',
+    stratHard: 'Hard abort (Immediate SIGKILL)',
+    drainedCleanly: 'Completed cleanly',
+    droppedConns: 'Dropped connections (502/RST)',
+    zeroDowntime: 'Zero-Downtime: zero requests interrupted.',
+    downtimeOccurred: 'Downtime: client connections abruptly severed.',
+    s15Disclaimer: 'Pedagogical model; real deployments coordinate with Kubernetes preStop hooks and load balancers.',
   },
   ja: {
     s05Title: 'S05 · ワーカープールシミュレーター（決定論的モデル）',
@@ -187,7 +291,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: '処理数／ステップ',
     processed: '処理済み',
     queued: '待機中',
-    s18Disclaimer: '決定論的モデルであり、Goの測定値や本番遅延を示すものではありません。'
+    s18Disclaimer: '決定論的モデルであり、Goの測定値や本番遅延を示すものではありません。',
+    s03Title: 'S03 · 冪等性とキャッシュTTLの有効期限',
+    s03Subtitle: 'スライディングウィンドウと有効期限を持つ重複排除モデル。',
+    dupRate: '重複率',
+    ttlSeconds: 'キャッシュTTL（秒）',
+    windowSeconds: 'リトライウィンドウ（秒）',
+    uniqueReqs: '一意なリクエスト',
+    filteredDups: '除外された重複',
+    leakedDups: 'DBへ漏れた重複',
+    dbWrites: 'DBへの最終書込数',
+    s03Disclaimer: '決定論的モデルです。本番ではRedis SETNXやDBトランザクションが必要です。',
+    s06Title: 'S06 · データレースとアトミック同期',
+    s06Subtitle: '非同期並行書き込みとsync/atomicの比較モデル。',
+    goroutines: 'Goroutines',
+    iterations: '反復回数',
+    syncMode: '同期モード',
+    syncNone: '同期なし（レース）',
+    syncAtomic: 'sync/atomic（アトミック）',
+    syncMutex: 'sync.Mutex（排他制御）',
+    targetCount: '期待値',
+    finalCount: '達成値',
+    lostUpdates: '失われた更新',
+    raceDetected: 'データレース検出（更新の消失）。',
+    raceClean: 'データレースなし：安全に同期。',
+    s06Disclaimer: 'Goランタイムなしの概念モデルです。実コードは「go test -race」で検証してください。',
+    s14Title: 'S14 · テール遅延 P99 とメモリ圧力',
+    s14Subtitle: 'メモリ割り当てとGCが P50, P90, P99 遅延に与える影響。',
+    baseLatency: '基本遅延 (ms)',
+    allocsPerOp: '割り当て回数/op',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50（中央値）',
+    p90Label: 'P90',
+    p99Label: 'P99（テール遅延）',
+    jitterLabel: 'ジッター (P99 - P50)',
+    s14Disclaimer: '教育用決定論的モデルです。実際のGo GCはCPU数やヒープサイズに依存します。',
+    s15Title: 'S15 · グレースフルシャットダウンの接続ドレイン',
+    s15Subtitle: '強制終了 (SIGKILL) と http.Server.Shutdown(ctx) による正常ドレインの比較。',
+    inFlightReqs: '処理中のリクエスト',
+    drainTimeout: 'ドレイン猶予時間（秒）',
+    reqDuration: 'リクエスト処理時間（秒）',
+    shutdownStrat: 'シャットダウン戦略',
+    stratGraceful: 'グレースフル（正常排空）',
+    stratHard: '強制終了 (SIGKILL)',
+    drainedCleanly: '正常完了',
+    droppedConns: '切断された接続 (502/RST)',
+    zeroDowntime: 'ゼロダウンタイム：中断されたリクエストなし。',
+    downtimeOccurred: 'サービス中断：クライアント接続が切断されました。',
+    s15Disclaimer: '教育用モデルです。本番ではKubernetes preStopフックやLBと連携します。',
   },
   zh: {
     s05Title: 'S05 · 工作池模拟器 · 确定性模型',
@@ -245,7 +396,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: '每步处理',
     processed: '已处理',
     queued: '排队中',
-    s18Disclaimer: '确定性模型；不代表 Go 生产环境性能指标或实际延迟。'
+    s18Disclaimer: '确定性模型；不代表 Go 生产环境性能指标或实际延迟。',
+    s03Title: 'S03 · 幂等性与缓存 TTL 有效期',
+    s03Subtitle: '带有滑动重试窗口与有效期的去重概念模型。',
+    dupRate: '重复率',
+    ttlSeconds: '缓存 TTL（秒）',
+    windowSeconds: '重试窗口（秒）',
+    uniqueReqs: '唯一请求',
+    filteredDups: '已拦截重复',
+    leakedDups: '穿透至数据库',
+    dbWrites: '数据库最终写入',
+    s03Disclaimer: '确定性概念模型；生产级系统需要 Redis SETNX 或数据库事务保证。',
+    s06Title: 'S06 · 数据竞争与原子同步对比',
+    s06Subtitle: '无锁并发写入与 sync/atomic 互斥对比模型。',
+    goroutines: '并发协程数',
+    iterations: '每协程迭代数',
+    syncMode: '同步模式',
+    syncNone: '无同步（数据竞争）',
+    syncAtomic: 'sync/atomic（原子操作）',
+    syncMutex: 'sync.Mutex（互斥锁）',
+    targetCount: '期望计数',
+    finalCount: '实际计数',
+    lostUpdates: '丢失更新数',
+    raceDetected: '检测到数据竞争（更新丢失）。',
+    raceClean: '无竞争：安全同步。',
+    s06Disclaimer: '概念模型。请在本地终端运行 "go test -race" 验证真实代码。',
+    s14Title: 'S14 · P99 尾部延迟与内存压力',
+    s14Subtitle: '内存分配与 GC 调优对 P50、P90、P99 延迟分位数的影响。',
+    baseLatency: '基础延迟 (ms)',
+    allocsPerOp: '每次操作分配数',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50 (中位数)',
+    p90Label: 'P90',
+    p99Label: 'P99 (尾部延迟)',
+    jitterLabel: '抖动 (P99 - P50)',
+    s14Disclaimer: '教学确定性模型；真实 Go GC 受 CPU 核心数、堆大小及 STW 暂停影响。',
+    s15Title: 'S15 · 优雅停机中的连接排空',
+    s15Subtitle: '硬杀进程 (SIGKILL) 与 http.Server.Shutdown(ctx) 优雅排空对比。',
+    inFlightReqs: '处理中的飞行请求',
+    drainTimeout: '排空超时时间（秒）',
+    reqDuration: '请求耗时（秒）',
+    shutdownStrat: '停机策略',
+    stratGraceful: '优雅停机（顺序排空）',
+    stratHard: '强制终止 (SIGKILL)',
+    drainedCleanly: '顺利完成',
+    droppedConns: '掉线连接 (502/RST)',
+    zeroDowntime: '零宕机：无中断请求。',
+    downtimeOccurred: '服务中断：客户端连接异常中断。',
+    s15Disclaimer: '教学模型；生产部署通常配合 Kubernetes preStop 钩子及负载均衡器协同工作。',
   },
   pt: {
     s05Title: 'S05 · Simulador de worker pool · Modelo determinístico',
@@ -303,7 +501,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: 'Processados por passo',
     processed: 'Processados',
     queued: 'Na fila',
-    s18Disclaimer: 'Modelo determinístico; não representa métricas reais de Go ou latências de produção.'
+    s18Disclaimer: 'Modelo determinístico; não representa métricas reais de Go ou latências de produção.',
+    s03Title: 'S03 · Idempotência e expiração TTL de cache',
+    s03Subtitle: 'Modelo conceitual de desduplicação com janela de retentativas e expiração.',
+    dupRate: 'Taxa de duplicados',
+    ttlSeconds: 'TTL do cache (seg)',
+    windowSeconds: 'Janela de retentativas (seg)',
+    uniqueReqs: 'Requisições únicas',
+    filteredDups: 'Duplicados filtrados',
+    leakedDups: 'Vazados para o BD',
+    dbWrites: 'Gravações no banco',
+    s03Disclaimer: 'Modelo conceitual determinístico; em produção exige Redis SETNX ou transações.',
+    s06Title: 'S06 · Condições de corrida vs sincronização atômica',
+    s06Subtitle: 'Modelo de escrita concorrente sem mutex vs sync/atomic.',
+    goroutines: 'Goroutines',
+    iterations: 'Iterações por goroutine',
+    syncMode: 'Modo de sincronização',
+    syncNone: 'Sem sincronização (Race)',
+    syncAtomic: 'sync/atomic (Atômico)',
+    syncMutex: 'sync.Mutex (Exclusão mútua)',
+    targetCount: 'Contagem esperada',
+    finalCount: 'Contagem alcançada',
+    lostUpdates: 'Atualizações perdidas',
+    raceDetected: 'Condição de corrida detectada (perdas).',
+    raceClean: 'Sem corrida: sincronização segura.',
+    s06Disclaimer: 'Modelo conceitual; execute "go test -race" localmente para verificar código real.',
+    s14Title: 'S14 · Latência de cauda P99 e pressão de memória',
+    s14Subtitle: 'Impacto das alocações e GC pacer nos percentis P50, P90 e P99.',
+    baseLatency: 'Latência base (ms)',
+    allocsPerOp: 'Alocações por op',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50 (mediana)',
+    p90Label: 'P90',
+    p99Label: 'P99 (cauda crítica)',
+    jitterLabel: 'Jitter (P99 - P50)',
+    s14Disclaimer: 'Modelo didático; o GC real do Go depende de CPUs e tamanho de heap.',
+    s15Title: 'S15 · Drenagem de conexões em Graceful Shutdown',
+    s15Subtitle: 'Comparação entre SIGKILL e drenagem limpa com http.Server.Shutdown(ctx).',
+    inFlightReqs: 'Requisições em trânsito',
+    drainTimeout: 'Timeout de drenagem (seg)',
+    reqDuration: 'Duração da requisição (seg)',
+    shutdownStrat: 'Estratégia de desligamento',
+    stratGraceful: 'Graceful (Drenagem ordenada)',
+    stratHard: 'Abrupto (SIGKILL imediato)',
+    drainedCleanly: 'Concluídas com sucesso',
+    droppedConns: 'Conexões perdidas (502/RST)',
+    zeroDowntime: 'Zero-Downtime: nenhuma requisição interrompida.',
+    downtimeOccurred: 'Queda de serviço: conexões de clientes interrompidas.',
+    s15Disclaimer: 'Simulação didática; em Kubernetes coordena-se com hooks preStop e balanceadores.',
   },
   fr: {
     s05Title: 'S05 · Simulateur de pool d’exécutants · Modèle déterministe',
@@ -361,7 +606,54 @@ const simTexts: Record<Locale, Record<string, string>> = {
     processedPerStep: 'Traités par étape',
     processed: 'Traités',
     queued: 'En attente',
-    s18Disclaimer: 'Modèle déterministe ; ne reflète pas les métriques Go ou latences de production.'
+    s18Disclaimer: 'Modèle déterministe ; ne reflète pas les métriques Go ou latences de production.',
+    s03Title: 'S03 · Idempotence et expiration TTL du cache',
+    s03Subtitle: 'Modèle conceptuel de déduplication avec fenêtre et expiration.',
+    dupRate: 'Taux de doublons',
+    ttlSeconds: 'TTL du cache (sec)',
+    windowSeconds: 'Fenêtre de réessais (sec)',
+    uniqueReqs: 'Requêtes uniques',
+    filteredDups: 'Doublons filtrés',
+    leakedDups: 'Fuites vers la BD',
+    dbWrites: 'Écritures réelles en BD',
+    s03Disclaimer: 'Modèle déterministe ; la production requiert Redis SETNX ou transactions BD.',
+    s06Title: 'S06 · Compétition de données vs synchronisation atomique',
+    s06Subtitle: 'Modèle conceptuel d’écritures sans verrou vs sync/atomic.',
+    goroutines: 'Goroutines',
+    iterations: 'Itérations par goroutine',
+    syncMode: 'Mode de synchronisation',
+    syncNone: 'Sans synchronisation (Race)',
+    syncAtomic: 'sync/atomic (Atomique)',
+    syncMutex: 'sync.Mutex (Exclusion mutuelle)',
+    targetCount: 'Total attendu',
+    finalCount: 'Total atteint',
+    lostUpdates: 'Mises à jour perdues',
+    raceDetected: 'Compétition détectée (mises à jour perdues).',
+    raceClean: 'Sans compétition : synchronisation sûre.',
+    s06Disclaimer: 'Modèle conceptuel ; lancez "go test -race" localement pour valider le code réel.',
+    s14Title: 'S14 · Latence de queue P99 et pression mémoire',
+    s14Subtitle: 'Impact des allocations et du GC sur les percentiles P50, P90 et P99.',
+    baseLatency: 'Latence de base (ms)',
+    allocsPerOp: 'Allocations par op',
+    gogcPercent: 'GOGC (%)',
+    p50Label: 'P50 (médiane)',
+    p90Label: 'P90',
+    p99Label: 'P99 (latence de queue)',
+    jitterLabel: 'Gigue (P99 - P50)',
+    s14Disclaimer: 'Modèle pédagogique déterministe ; le GC réel dépend des cœurs et de la taille du tas.',
+    s15Title: 'S15 · Drainage des connexions lors de l’arrêt ordonné',
+    s15Subtitle: 'Comparaison entre arrêt forcé (SIGKILL) et drainage propre via Shutdown(ctx).',
+    inFlightReqs: 'Requêtes en cours',
+    drainTimeout: 'Délai de drainage (sec)',
+    reqDuration: 'Durée des requêtes (sec)',
+    shutdownStrat: 'Stratégie d’arrêt',
+    stratGraceful: 'Ordonné (Drainage propre)',
+    stratHard: 'Brutal (SIGKILL immédiat)',
+    drainedCleanly: 'Terminées proprement',
+    droppedConns: 'Connexions perdues (502/RST)',
+    zeroDowntime: 'Zéro interruption : aucune requête rompue.',
+    downtimeOccurred: 'Interruption de service : connexions brutalement fermées.',
+    s15Disclaimer: 'Modèle pédagogique ; s’associe à des hooks preStop Kubernetes et répartiteurs.',
   }
 };
 
@@ -405,6 +697,32 @@ export function SeniorSimulationLab({ moduleId, locale = 'es' }: { moduleId: str
   const [retries, setRetries] = useState(3);
   const [bounded, setBounded] = useState(false);
   const storm = useMemo(() => retryStormScenario({ requests, failurePercent: failures, maxRetries: retries, policy: bounded ? 'bounded' : 'immediate' }), [requests, failures, retries, bounded]);
+
+  // S03 State (Idempotency Window)
+  const [s03Reqs, setS03Reqs] = useState(100);
+  const [s03DupRate, setS03DupRate] = useState(30);
+  const [s03Ttl, setS03Ttl] = useState(60);
+  const [s03Win, setS03Win] = useState(60);
+  const s03 = useMemo(() => idempotencyWindowScenario({ requests: s03Reqs, duplicateRate: s03DupRate, ttlSeconds: s03Ttl, windowSeconds: s03Win }), [s03Reqs, s03DupRate, s03Ttl, s03Win]);
+
+  // S06 State (Data Race vs Atomic)
+  const [s06Goro, setS06Goro] = useState(100);
+  const [s06Iter, setS06Iter] = useState(10);
+  const [s06Sync, setS06Sync] = useState<'none' | 'atomic' | 'mutex'>('none');
+  const s06 = useMemo(() => dataRaceScenario({ goroutines: s06Goro, iterations: s06Iter, syncMode: s06Sync }), [s06Goro, s06Iter, s06Sync]);
+
+  // S14 State (Latency Percentiles P99)
+  const [s14Base, setS14Base] = useState(2);
+  const [s14Allocs, setS14Allocs] = useState(15);
+  const [s14Gogc, setS14Gogc] = useState(100);
+  const s14 = useMemo(() => latencyPercentilesScenario({ baseLatencyMs: s14Base, allocsPerOp: s14Allocs, gogc: s14Gogc }), [s14Base, s14Allocs, s14Gogc]);
+
+  // S15 State (Graceful Shutdown)
+  const [s15InFlight, setS15InFlight] = useState(50);
+  const [s15Drain, setS15Drain] = useState(5);
+  const [s15Dur, setS15Dur] = useState(3);
+  const [s15Strat, setS15Strat] = useState<'graceful' | 'hard'>('graceful');
+  const s15 = useMemo(() => gracefulShutdownScenario({ inFlight: s15InFlight, drainTimeoutSec: s15Drain, reqDurationSec: s15Dur, strategy: s15Strat }), [s15InFlight, s15Drain, s15Dur, s15Strat]);
 
   if (moduleId === 'S05') {
     return (
@@ -584,6 +902,152 @@ export function SeniorSimulationLab({ moduleId, locale = 'es' }: { moduleId: str
           <span>{t.unresolved}: <b>{storm.unresolved}</b></span>
         </div>
         <p class="small-disclaimer">{t.s11Disclaimer}</p>
+      </section>
+    );
+  }
+
+  if (moduleId === 'S03') {
+    return (
+      <section class="card worker-lab" aria-label="Simulador de ventana de idempotencia">
+        <h2>{t.s03Title}</h2>
+        <p class="muted">{t.s03Subtitle}</p>
+        <div class="worker-controls">
+          <label>
+            {t.requests}: {s03Reqs}
+            <input type="range" min="20" max="500" step="20" value={s03Reqs} onInput={e => setS03Reqs(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.dupRate}: {s03DupRate}%
+            <input type="range" min="0" max="80" step="5" value={s03DupRate} onInput={e => setS03DupRate(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.ttlSeconds}: {s03Ttl}s
+            <input type="range" min="10" max="180" step="10" value={s03Ttl} onInput={e => setS03Ttl(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.windowSeconds}: {s03Win}s
+            <input type="range" min="10" max="180" step="10" value={s03Win} onInput={e => setS03Win(Number(e.currentTarget.value))} />
+          </label>
+        </div>
+        <div class="worker-metrics">
+          <span>{t.uniqueReqs}: <b>{s03.uniqueRequests}</b></span>
+          <span>{t.filteredDups}: <b>{s03.filteredDuplicates}</b></span>
+          <span>{t.leakedDups}: <b style={{ color: s03.isSafe ? 'var(--green)' : 'var(--red)' }}>{s03.leakedDuplicates}</b></span>
+          <span>{t.dbWrites}: <b>{s03.dbWrites}</b></span>
+        </div>
+        <p class={s03.isSafe ? 'feedback correct' : 'feedback incorrect'}>
+          {s03.isSafe ? 'TTL >= Ventana: Protección total contra doble escritura.' : 'TTL < Ventana: Fuga de duplicados detectada en la base de datos.'}
+        </p>
+        <p class="small-disclaimer">{t.s03Disclaimer}</p>
+      </section>
+    );
+  }
+
+  if (moduleId === 'S06') {
+    return (
+      <section class="card worker-lab" aria-label="Simulador de condiciones de carrera">
+        <h2>{t.s06Title}</h2>
+        <p class="muted">{t.s06Subtitle}</p>
+        <div class="worker-controls">
+          <label>
+            {t.goroutines}: {s06Goro}
+            <input type="range" min="10" max="300" step="10" value={s06Goro} onInput={e => setS06Goro(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.iterations}: {s06Iter}
+            <input type="range" min="1" max="30" value={s06Iter} onInput={e => setS06Iter(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.syncMode}
+            <select value={s06Sync} onChange={e => setS06Sync(e.currentTarget.value as 'none' | 'atomic' | 'mutex')}>
+              <option value="none">{t.syncNone}</option>
+              <option value="atomic">{t.syncAtomic}</option>
+              <option value="mutex">{t.syncMutex}</option>
+            </select>
+          </label>
+        </div>
+        <div class="worker-metrics">
+          <span>{t.targetCount}: <b>{s06.targetCount}</b></span>
+          <span>{t.finalCount}: <b>{s06.finalCount}</b></span>
+          <span>{t.lostUpdates}: <b style={{ color: s06.lostUpdates > 0 ? 'var(--red)' : 'var(--green)' }}>{s06.lostUpdates}</b></span>
+        </div>
+        <p class={s06.raceDetected ? 'feedback incorrect' : 'feedback correct'}>
+          {s06.raceDetected ? t.raceDetected : t.raceClean}
+        </p>
+        <p class="small-disclaimer">{t.s06Disclaimer}</p>
+      </section>
+    );
+  }
+
+  if (moduleId === 'S14') {
+    return (
+      <section class="card worker-lab" aria-label="Simulador de latencia P99">
+        <h2>{t.s14Title}</h2>
+        <p class="muted">{t.s14Subtitle}</p>
+        <div class="worker-controls">
+          <label>
+            {t.baseLatency}: {s14Base}ms
+            <input type="range" min="1" max="20" value={s14Base} onInput={e => setS14Base(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.allocsPerOp}: {s14Allocs} allocs
+            <input type="range" min="0" max="60" step="2" value={s14Allocs} onInput={e => setS14Allocs(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.gogcPercent}: {s14Gogc}%
+            <input type="range" min="40" max="300" step="20" value={s14Gogc} onInput={e => setS14Gogc(Number(e.currentTarget.value))} />
+          </label>
+        </div>
+        <div class="worker-metrics">
+          <span>{t.p50Label}: <b>{s14.p50} ms</b></span>
+          <span>{t.p90Label}: <b>{s14.p90} ms</b></span>
+          <span>{t.p99Label}: <b style={{ color: s14.p99 > 15 ? 'var(--red)' : 'var(--green)' }}>{s14.p99} ms</b></span>
+          <span>{t.jitterLabel}: <b>{s14.jitter} ms</b></span>
+        </div>
+        <p class={s14.allocsPerOp === 0 ? 'feedback correct' : s14.p99 > 15 ? 'feedback incorrect' : 'notice'}>
+          {s14.allocsPerOp === 0
+            ? 'Cero asignaciones: latencia plana sin pausas de Garbage Collection.'
+            : `Presión de memoria: ${s14.allocsPerOp} allocs/op amplifican el percentil P99 por sobrecarga de GC.`}
+        </p>
+        <p class="small-disclaimer">{t.s14Disclaimer}</p>
+      </section>
+    );
+  }
+
+  if (moduleId === 'S15') {
+    return (
+      <section class="card worker-lab" aria-label="Simulador de graceful shutdown">
+        <h2>{t.s15Title}</h2>
+        <p class="muted">{t.s15Subtitle}</p>
+        <div class="worker-controls">
+          <label>
+            {t.inFlightReqs}: {s15InFlight}
+            <input type="range" min="10" max="200" step="10" value={s15InFlight} onInput={e => setS15InFlight(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.drainTimeout}: {s15Drain}s
+            <input type="range" min="1" max="15" value={s15Drain} onInput={e => setS15Drain(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.reqDuration}: {s15Dur}s
+            <input type="range" min="1" max="15" value={s15Dur} onInput={e => setS15Dur(Number(e.currentTarget.value))} />
+          </label>
+          <label>
+            {t.shutdownStrat}
+            <select value={s15Strat} onChange={e => setS15Strat(e.currentTarget.value as 'graceful' | 'hard')}>
+              <option value="graceful">{t.stratGraceful}</option>
+              <option value="hard">{t.stratHard}</option>
+            </select>
+          </label>
+        </div>
+        <div class="worker-metrics">
+          <span>{t.drainedCleanly}: <b>{s15.drainedCleanly}</b></span>
+          <span>{t.droppedConns}: <b style={{ color: s15.droppedConnections > 0 ? 'var(--red)' : 'var(--green)' }}>{s15.droppedConnections}</b></span>
+        </div>
+        <p class={s15.isZeroDowntime ? 'feedback correct' : 'feedback incorrect'}>
+          {s15.isZeroDowntime ? t.zeroDowntime : t.downtimeOccurred}
+        </p>
+        <p class="small-disclaimer">{t.s15Disclaimer}</p>
       </section>
     );
   }

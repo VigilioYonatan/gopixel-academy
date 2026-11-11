@@ -129,7 +129,7 @@
       "pt": "Diferença entre slices e arrays, ponteiro de cabeçalho, len, cap, make e append.",
       "fr": "Différences entre slices et tableaux, pointeur d'en-tête, len, cap, make et append."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B07",
@@ -151,7 +151,7 @@
       "pt": "Estrutura de hash maps, chave-valor, idioma comma-ok, iteração e delete.",
       "fr": "Structure de table de hachage, clé-valeur, syntaxe comma-ok, itération et delete."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B08",
@@ -173,7 +173,7 @@
       "pt": "Definição de structs, inicialização de campos, tags JSON e composição por embutimento.",
       "fr": "Définition de structures, balises JSON, initialisation des champs et composition intégrée."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B09",
@@ -195,7 +195,7 @@
       "pt": "Operadores & e *, semântica de passagem por valor vs ponteiro e segurança de memória.",
       "fr": "Opérateurs & et *, sémantique de passage par valeur vs pointeur et sécurité mémoire."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B10",
@@ -217,7 +217,7 @@
       "pt": "Receptores por valor e ponteiro, implementação implícita de interfaces e desacoplamento.",
       "fr": "Récepteurs par valeur et pointeur, implémentation implicite d'interfaces et typage canard."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B11",
@@ -239,7 +239,7 @@
       "pt": "Tipo error como valor explícito, defer para limpeza de recursos, panic e recover.",
       "fr": "Type error comme valeur explicite, defer pour le nettoyage, panic et recover contrôlé."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "B12",
@@ -261,7 +261,7 @@
       "pt": "Projeto integrador: contas bancárias com depósitos, saques validados, saldos e testes.",
       "fr": "Projet intégrateur : grand livre bancaire avec dépôts, retraits validés et tests unitaires."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I01",
@@ -283,7 +283,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I02",
@@ -305,7 +305,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I03",
@@ -327,7 +327,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I04",
@@ -349,7 +349,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I05",
@@ -371,7 +371,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I06",
@@ -393,7 +393,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I07",
@@ -415,7 +415,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I08",
@@ -437,7 +437,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I09",
@@ -459,7 +459,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I10",
@@ -481,7 +481,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I11",
@@ -503,7 +503,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "I12",
@@ -525,7 +525,7 @@
       "pt": "Interfaces, HTTP, persistência e testes.",
       "fr": "Interfaces, HTTP, persistance et tests."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A01",
@@ -547,7 +547,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A02",
@@ -569,7 +569,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A03",
@@ -591,7 +591,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A04",
@@ -613,7 +613,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A05",
@@ -635,7 +635,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A06",
@@ -657,7 +657,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A07",
@@ -679,7 +679,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A08",
@@ -701,7 +701,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A09",
@@ -723,7 +723,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A10",
@@ -745,7 +745,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A11",
@@ -767,7 +767,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "A12",
@@ -789,7 +789,7 @@
       "pt": "Concorrência, runtime, protocolos e otimização.",
       "fr": "Concurrence, runtime, protocoles et optimisation."
     },
-    "status": "planned"
+    "status": "implemented"
   },
   {
     "id": "S01",
@@ -811,7 +811,7 @@
       "pt": "Eliminar complexidade acidental, interfaces mínimas, código plano e refatoração idiomática.",
       "fr": "Élimination de la complexité accidentelle, interfaces minimales et refactorisation idiomatique."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "review",
       "scenario": {
@@ -852,7 +852,7 @@
       "pt": "Inversão de dependências, isolamento de domínio limpo, portas e adaptadores em Go.",
       "fr": "Inversion de dépendance, isolation propre du domaine, ports et adaptateurs en Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "architecture",
       "scenario": {
@@ -893,7 +893,7 @@
       "pt": "Contratos REST e RPC robustos, chaves de idempotência, versionamento e tratamento de erros.",
       "fr": "Contrats d'API REST et RPC robustes, clés d'idempotence, versionnage et gestion d'erreurs."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "architecture",
       "scenario": {
@@ -934,7 +934,7 @@
       "pt": "Entidades de domínio ricas, value objects imutáveis, invariantes estritas e máquinas de estado.",
       "fr": "Entités riches, value objects immuables, invariants stricts et transitions d'états."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "architecture",
       "scenario": {
@@ -975,7 +975,7 @@
       "pt": "Worker pools com backpressure, limites de saturação, canais limitados e drenagem graciosa.",
       "fr": "Worker pools avec contre-pression, plafonds de saturation et arrêt gracieux."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "debug",
       "scenario": {
@@ -1016,7 +1016,7 @@
       "pt": "Garantia happens-before, primitivas sync/atomic, reordenação de memória e prevenção de data races.",
       "fr": "Garantie happens-before, primitives sync/atomic, réordonnancement mémoire et prévention des data races."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "debug",
       "scenario": {
@@ -1057,7 +1057,7 @@
       "pt": "Análise de escape, retenção de ponteiros, ritmo do Garbage Collector e ajuste de GOMAXPROCS.",
       "fr": "Analyse d'échappement, rétention des pointeurs, rythme du Garbage Collector et GOMAXPROCS."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "incident",
       "scenario": {
@@ -1098,7 +1098,7 @@
       "pt": "Perfis pprof de CPU/memória, benchmarks de alocação por operação e otimização de latência p99.",
       "fr": "Profils pprof CPU et mémoire, benchmarks d'allocation et réduction de la latence p99."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "performance",
       "scenario": {
@@ -1139,7 +1139,7 @@
       "pt": "Garantias at-least-once, desduplicação, padrão transactional outbox e transações de compensação.",
       "fr": "Garanties au moins une fois, déduplication, motif Transactional Outbox et compensations."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "architecture",
       "scenario": {
@@ -1180,7 +1180,7 @@
       "pt": "Níveis de isolamento SQL, contenção de locks, deadlocks e consistência eventual vs forte.",
       "fr": "Niveaux d'isolation SQL, contention des verrous, impasses et cohérence à terme vs forte."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "incident",
       "scenario": {
@@ -1221,7 +1221,7 @@
       "pt": "Circuit breakers, retentativas com backoff exponencial e jitter, timeouts e fail-safe.",
       "fr": "Coupe-circuits, retentatives avec temporisation exponentielle et gigue, et timeouts stricts."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "incident",
       "scenario": {
@@ -1262,7 +1262,7 @@
       "pt": "Validação defensiva de entradas, prevenção de injeção, hashing seguro e zero trust.",
       "fr": "Validation défensive des entrées, prévention des injections et politiques zéro confiance."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "security",
       "scenario": {
@@ -1303,7 +1303,7 @@
       "pt": "Fuzzing nativo em Go, testes determinísticos de concorrência, flag -race e injeção de falhas.",
       "fr": "Fuzzing natif en Go, tests déterministes de concurrence, détecteur -race et simulations."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "testing",
       "scenario": {
@@ -1344,7 +1344,7 @@
       "pt": "Logs estruturados com slog, métricas RED/USE, rastreamento distribuído e runbooks de plantão.",
       "fr": "Journalisation structurée avec slog, métriques RED/USE, traçage distribué et runbooks d'astreinte."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "incident",
       "scenario": {
@@ -1385,7 +1385,7 @@
       "pt": "Builds Docker scratch multi-estágio, probes de Kubernetes, rolling updates e graceful shutdown.",
       "fr": "Builds Docker scratch multi-étapes, sondes Kubernetes, déploiements continus et arrêt gracieux."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "operations",
       "scenario": {
@@ -1426,7 +1426,7 @@
       "pt": "Migrações de esquema compatíveis com versões anteriores, padrão expand & contract e dívida técnica.",
       "fr": "Migrations de schéma rétrocompatibles, motif expand-and-contract et gestion de la dette."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "review",
       "scenario": {
@@ -1467,7 +1467,7 @@
       "pt": "Redação de ADRs (Architecture Decision Records), avaliação de trade-offs e mentoria de code review.",
       "fr": "Rédaction d'ADR (Architecture Decision Records), compromis techniques et revue de code de mentor."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "review",
       "scenario": {
@@ -1508,7 +1508,7 @@
       "pt": "Defesa arquitetural completa: dimensionamento SLA/SLO, failover multirregião e consistência.",
       "fr": "Défense architecturale complète : dimensionnement SLA/SLO, basculement multirégion et cohérence."
     },
-    "status": "planned",
+    "status": "implemented",
     "challenge": {
       "kind": "architecture",
       "scenario": {
@@ -1549,7 +1549,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "net/http",
       "httptest",
@@ -1576,7 +1576,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "Gin",
       "binding",
@@ -1603,7 +1603,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "Chi",
       "routing",
@@ -1630,7 +1630,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "Echo",
       "handlers",
@@ -1657,7 +1657,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "Fiber",
       "fasthttp",
@@ -1684,7 +1684,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "SQL",
       "GORM",
@@ -1712,7 +1712,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "gRPC",
       "Protobuf",
@@ -1739,7 +1739,7 @@
       "pt": "Frameworks backend e ferramentas do ecossistema Go.",
       "fr": "Frameworks backend et outils de l’écosystème Go."
     },
-    "status": "planned",
+    "status": "implemented",
     "tools": [
       "API contracts",
       "testing",

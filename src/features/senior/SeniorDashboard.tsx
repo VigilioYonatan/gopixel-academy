@@ -1,6 +1,88 @@
+import { useState } from 'preact/hooks';
 import curriculum from '../../data/curriculum.json';
 
 type Locale = 'es' | 'en' | 'ja' | 'zh' | 'pt' | 'fr';
+type SeniorCategory = 'all' | 'concurrency' | 'resilience' | 'performance' | 'architecture' | 'operations';
+type StatusFilter = 'all' | 'completed' | 'progress' | 'idle';
+
+const statusLabels: Record<StatusFilter, Record<Locale, string>> = {
+  all: { es: 'Todos', en: 'All', ja: 'すべて', zh: '全部', pt: 'Todos', fr: 'Tous' },
+  completed: { es: 'Completados', en: 'Completed', ja: '完了', zh: '已完成', pt: 'Concluídos', fr: 'Complétés' },
+  progress: { es: 'En progreso', en: 'In progress', ja: '進行中', zh: '进行中', pt: 'Em progresso', fr: 'En cours' },
+  idle: { es: 'Sin iniciar', en: 'Not started', ja: '未着手', zh: '未开始', pt: 'Não iniciado', fr: 'Non commencé' },
+};
+
+const moduleCategories: Record<string, SeniorCategory> = {
+  S01: 'concurrency',
+  S02: 'concurrency',
+  S03: 'resilience',
+  S04: 'performance',
+  S05: 'resilience',
+  S06: 'concurrency',
+  S07: 'performance',
+  S08: 'architecture',
+  S09: 'concurrency',
+  S10: 'resilience',
+  S11: 'operations',
+  S12: 'operations',
+  S13: 'architecture',
+  S14: 'performance',
+  S15: 'operations',
+  S16: 'performance',
+  S17: 'operations',
+  S18: 'architecture',
+};
+
+const categoryLabels: Record<SeniorCategory, Record<Locale, string>> = {
+  all: {
+    es: 'Todos',
+    en: 'All',
+    ja: 'すべて',
+    zh: '全部',
+    pt: 'Todos',
+    fr: 'Tous',
+  },
+  concurrency: {
+    es: 'Concurrencia & Memoria',
+    en: 'Concurrency & Memory',
+    ja: '並行処理 & メモリ',
+    zh: '并发与内存',
+    pt: 'Concorrência & Memória',
+    fr: 'Concurrence & Mémoire',
+  },
+  resilience: {
+    es: 'Fiabilidad & APIs',
+    en: 'Resilience & APIs',
+    ja: '信頼性 & API',
+    zh: '韧性与 API',
+    pt: 'Confiabilidade & APIs',
+    fr: 'Résilience & APIs',
+  },
+  performance: {
+    es: 'Rendimiento & Profiling',
+    en: 'Performance & Profiling',
+    ja: '性能 & プロファイリング',
+    zh: '性能与调优',
+    pt: 'Desempenho & Profiling',
+    fr: 'Performance & Profilage',
+  },
+  architecture: {
+    es: 'Arquitectura & Dominio',
+    en: 'Architecture & Domain',
+    ja: 'アーキテクチャ & ドメイン',
+    zh: '架构与领域',
+    pt: 'Arquitetura & Domínio',
+    fr: 'Architecture & Domaine',
+  },
+  operations: {
+    es: 'Operaciones & Seguridad',
+    en: 'Operations & Security',
+    ja: '運用 & セキュリティ',
+    zh: '运维与安全',
+    pt: 'Operações & Segurança',
+    fr: 'Opérations & Sécurité',
+  },
+};
 
 type SeniorDashboardProps = {
   locale: Locale;
@@ -165,6 +247,30 @@ export function SeniorDashboard({
 }: SeniorDashboardProps) {
   const t = labels[locale] || labels.es;
   const seniors = curriculum.filter(m => m.track === 'senior');
+  const [activeCategory, setActiveCategory] = useState<SeniorCategory>('all');
+  const [activeStatus, setActiveStatus] = useState<StatusFilter>('all');
+
+  const categories: SeniorCategory[] = ['all', 'concurrency', 'resilience', 'performance', 'architecture', 'operations'];
+  const statusFilters: StatusFilter[] = ['all', 'completed', 'progress', 'idle'];
+
+  const getPassCount = (id: string) => [
+    seniorResults[id]?.passed,
+    evidenceResults[id]?.passed,
+    investigationResults[id]?.passed,
+    operationsResults[id]?.passed,
+    reviewResults[id]?.passed,
+  ].filter(Boolean).length;
+
+  const filteredSeniors = seniors.filter(s => {
+    const categoryMatches = activeCategory === 'all' || moduleCategories[s.id] === activeCategory;
+    const count = getPassCount(s.id);
+    const statusMatches =
+      activeStatus === 'all' ||
+      (activeStatus === 'completed' && count === 5) ||
+      (activeStatus === 'progress' && count > 0 && count < 5) ||
+      (activeStatus === 'idle' && count === 0);
+    return categoryMatches && statusMatches;
+  });
 
   const totalFinished =
     Object.keys(seniorResults).length +
@@ -203,28 +309,79 @@ export function SeniorDashboard({
 
       <div class="notice" role="status">{t.notice}</div>
 
-      <div class="senior-grid">
-        {seniors.map(x => {
-          const passCount = [
-            seniorResults[x.id]?.passed,
-            evidenceResults[x.id]?.passed,
-            investigationResults[x.id]?.passed,
-            operationsResults[x.id]?.passed,
-            reviewResults[x.id]?.passed,
-          ].filter(Boolean).length;
+      <div class="senior-filter-container">
+        {/* Status Filter Tabs (Image 2 style) */}
+        <div class="senior-status-tabs" role="tablist" aria-label="Filtro por estado">
+          {statusFilters.map(st => {
+            const count = st === 'all'
+              ? seniors.length
+              : st === 'completed'
+              ? seniors.filter(s => getPassCount(s.id) === 5).length
+              : st === 'progress'
+              ? seniors.filter(s => { const c = getPassCount(s.id); return c > 0 && c < 5; }).length
+              : seniors.filter(s => getPassCount(s.id) === 0).length;
+            const label = statusLabels[st][locale] || statusLabels[st].es;
+            return (
+              <button
+                key={st}
+                type="button"
+                role="tab"
+                aria-selected={activeStatus === st}
+                class={`senior-status-tab ${activeStatus === st ? 'active' : ''}`}
+                onClick={() => setActiveStatus(st)}
+              >
+                <span>{label}</span>
+                <span class="filter-count">({count})</span>
+              </button>
+            );
+          })}
+        </div>
 
-          const badgeText = passCount > 0 ? `${passCount}/5 ✓` : (seniorResults[x.id] ? `${seniorResults[x.id].score}%` : t.newBadge);
+        {/* Domain Categories */}
+        <div class="category-filter-bar" role="tablist" aria-label="Categorías Senior">
+          {categories.map(cat => {
+            const count = cat === 'all' ? seniors.length : seniors.filter(s => moduleCategories[s.id] === cat).length;
+            const label = categoryLabels[cat][locale] || categoryLabels[cat].es;
+            return (
+              <button
+                key={cat}
+                type="button"
+                role="tab"
+                aria-selected={activeCategory === cat}
+                class={`category-filter-btn ${activeCategory === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                <span>{label}</span>
+                <span class="filter-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div class="senior-grid senior-grid-v2">
+        {filteredSeniors.map(x => {
+          const passCount = getPassCount(x.id);
 
           return (
-            <a class="senior-card" key={x.id} href={`#/senior/${x.id}`}>
-              <div class="senior-card-top">
-                <img class="pixel-icon" src={asset('icons/crown.svg')} width={20} height={20} alt="" aria-hidden="true" />
-                <span>{x.id}</span>
-                <span class="senior-kind">{badgeText}</span>
+            <a class="senior-card senior-card-v2" key={x.id} href={`#/senior/${x.id}`}>
+              <div class="senior-card-badge-row">
+                <span class="senior-gate-badge">
+                  <b class="gate-id">{x.id}</b>
+                  <span class="gate-count">{passCount}/5 {locale === 'es' ? 'gates' : locale === 'en' ? 'gates' : locale === 'ja' ? 'gates' : locale === 'zh' ? '关卡' : locale === 'pt' ? 'gates' : 'gates'}</span>
+                </span>
               </div>
-              <h3>{x.title[locale]}</h3>
-              <p>{x.challenge?.scenario[locale]}</p>
-              <span class="text-link">{t.viewModule} ↗</span>
+              <h3 class="senior-card-title">{x.title[locale]}</h3>
+              <p class="senior-card-scenario">{x.challenge?.scenario[locale]}</p>
+              <div class="senior-card-action">
+                <span class={`status-link ${passCount === 5 ? 'done' : passCount > 0 ? 'progress' : 'idle'}`}>
+                  {passCount === 5
+                    ? `✓ ${locale === 'es' ? 'Completado' : locale === 'en' ? 'Completed' : locale === 'ja' ? '完了' : locale === 'zh' ? '已完成' : locale === 'pt' ? 'Concluído' : 'Complété'} →`
+                    : passCount > 0
+                    ? `⏳ ${locale === 'es' ? 'En progreso' : locale === 'en' ? 'In progress' : locale === 'ja' ? '進行中' : locale === 'zh' ? '进行中' : locale === 'pt' ? 'Em progresso' : 'En cours'} (${passCount}/5) →`
+                    : `☐ ${locale === 'es' ? 'No iniciado' : locale === 'en' ? 'Not started' : locale === 'ja' ? '未着手' : locale === 'zh' ? '未开始' : locale === 'pt' ? 'Não iniciado' : 'Non commencé'} →`}
+                </span>
+              </div>
             </a>
           );
         })}

@@ -19,11 +19,19 @@ export function CodeReviewLab({moduleId,locale,previous,save,reportOnly=false}:P
  const t=copies[locale]??copies.es;
  const [answers,setAnswers]=useState<number[]>([-1,-1]);
  const [grade,setGrade]=useState<ReviewGrade|null>(null);
+ const [prCopied, setPrCopied]=useState(false);
  if(!lab)return <section class="content-page" role="alert">404 · Review not found</section>;
  const selected=reportOnly?previous?.answers:answers;
  const evaluation=reportOnly&&previous?gradeCodeReview(lab,previous.answers):grade;
  const module=curriculum.find(x=>x.id===moduleId);
  const submit=()=>{try{const result=gradeCodeReview(lab,answers);const record:ReviewRecord={moduleId,challengeId:'code-review',version:lab.version,correct:result.correct,score:result.score,answers:[...answers],completedAt:new Date().toISOString(),passed:result.passed};save(record);setGrade(result)}catch{setGrade(null)}};
+ const copyPrFeedback=()=>{
+   if(!evaluation)return;
+   const text=`### Code Review: ${lab.title}\n\n**Evaluación:** ${evaluation.score}% (${evaluation.correct}/2 decisiones correctas)\n**Dictamen:** ${evaluation.passed?'Aprobado (Cumple estándares de concurrencia y producción)':'Cambios requeridos'}\n\n**Recomendación de arquitectura:**\n${lab.practice}\n\n*GoPixel Academy · Senior Mode Review*`;
+   navigator.clipboard?.writeText(text);
+   setPrCopied(true);
+   setTimeout(()=>setPrCopied(false),2000);
+ };
  return <section class="content-page senior-code-review" aria-labelledby="review-title">
   <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#/senior">Senior Mode</a><span>/</span><a href={`#/senior/${moduleId}`}>{moduleId}</a><span>/</span><b>{t.heading}</b></nav>
   <header class="page-heading"><span class="eyebrow small">{moduleId} · PEER REVIEW</span><h1 id="review-title">{module?.title[locale]??t.heading}</h1><p>{lab.title}</p></header>
@@ -37,7 +45,7 @@ export function CodeReviewLab({moduleId,locale,previous,save,reportOnly=false}:P
     </fieldset>)}
     {reportOnly&&!previous&&<p class="notice" role="status">{t.noResult}</p>}
     <div class="rubric-actions">{!reportOnly&&<button type="button" class="btn btn-senior" onClick={submit} disabled={!!grade||answers.some(a=>a<0)}>{t.evaluate}</button>}{!reportOnly&&<button type="button" class="btn btn-outline" onClick={()=>{setAnswers([-1,-1]);setGrade(null)}}>{t.reset}</button>}<a class="text-link" href={`#/senior/${moduleId}`}>{t.back}</a></div>
-    {evaluation&&<div class="notice" role="status"><strong>{t.results}: {evaluation.score}% · {evaluation.correct}/2</strong><p>{lab.practice}</p>{!reportOnly&&<a href={`#/senior/${moduleId}/review-lab/result`} class="text-link">{t.results} →</a>}</div>}
+    {evaluation&&<div class="notice" role="status"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}><strong>{t.results}: {evaluation.score}% · {evaluation.correct}/2</strong><button type="button" class="btn btn-outline" style={{minHeight:'32px',padding:'4px 10px',fontSize:'11px'}} onClick={copyPrFeedback}>{prCopied?'✓ Feedback copiado':'Copiar feedback de PR'}</button></div><p>{lab.practice}</p>{!reportOnly&&<a href={`#/senior/${moduleId}/review-lab/result`} class="text-link">{t.results} →</a>}</div>}
    </section></div><aside class="senior-aside"><section class="card"><h3>{t.results}</h3><p>{previous?`${previous.score}% · ${previous.correct}/2`:t.noResult}</p><p class="small-disclaimer">{lab.verification}</p><a href={`#/senior/${moduleId}/guide`} class="text-link">Go · Guide →</a></section></aside></div>
  </section>;
 }
