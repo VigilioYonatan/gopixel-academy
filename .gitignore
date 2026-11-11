@@ -8,3 +8,6 @@ dist/
 screenshots/master-e2e/
 screenshots/button-e2e/
 test-results/
+*.rar
+*.tar*
+*.7z

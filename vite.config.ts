@@ -6,4 +6,9 @@ import preact from '@preact/preset-vite';
 export default defineConfig({
   plugins: [preact()],
   base: process.env.VITE_BASE || '/gopixel-academy/',
+  server: {
+    watch: {
+      ignored: ['**/*.rar', '**/*.zip', '**/*.7z', '**/test-results/**', '**/screenshots/**']
+    }
+  }
 });
